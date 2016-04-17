@@ -403,6 +403,8 @@ public class Game implements Serializable, PlayerListener, WorldListener, Battle
 			dragons = x.dragons;
 			state = x.state;
 			listener = x.listener;
+			saved = fileName;
+			x = null;
 		} catch (IOException i) {
 			i.printStackTrace();
 			return;

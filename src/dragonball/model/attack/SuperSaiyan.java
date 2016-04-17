@@ -5,6 +5,7 @@ import dragonball.model.character.fighter.Saiyan;
 import dragonball.model.exceptions.NotASaiyanException;
 import dragonball.model.exceptions.NotEnoughKiException;
 
+@SuppressWarnings("serial")
 public class SuperSaiyan extends UltimateAttack {
 
 	public SuperSaiyan() {

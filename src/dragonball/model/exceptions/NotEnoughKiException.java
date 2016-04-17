@@ -7,7 +7,7 @@ public class NotEnoughKiException extends NotEnoughResourcesException{
 	private int requiredKi;
 	
 	public NotEnoughKiException(int requiredKi, int availableKi) {
-		super("available ki: " + availableKi + " required ki: "+ requiredKi);
+		super("available ki: " + availableKi + "\nrequired ki: "+ requiredKi);
 		this.availableKi = availableKi;
 		this.requiredKi = requiredKi;
 	}

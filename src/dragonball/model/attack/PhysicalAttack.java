@@ -3,6 +3,7 @@ package dragonball.model.attack;
 import dragonball.model.battle.BattleOpponent;
 import dragonball.model.character.fighter.Fighter;
 
+@SuppressWarnings("serial")
 public class PhysicalAttack extends Attack {
 
 	public PhysicalAttack() {
