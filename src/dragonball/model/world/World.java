@@ -18,6 +18,7 @@ public class World implements Serializable, CellListener {
 	private int playerColumn;
 	private int playerRow;
 	private WorldListener listener;
+	private NonPlayableFighter boss;
 
 	public World() {
 		map = new Cell[MAP_SIZE][MAP_SIZE];
@@ -33,10 +34,12 @@ public class World implements Serializable, CellListener {
 		Random r = new Random();
 		Random col = new Random();
 		Random row = new Random();
+
 		// random boss
-		NonPlayableFighter boss = strongFoes.get(r.nextInt(strongFoes.size()));
+		boss = strongFoes.get(r.nextInt(strongFoes.size()));
 		map[0][0] = new FoeCell(boss);
 		map[0][0].setListener(this);
+
 		NonPlayableFighter foe;
 		int x, y;
 		for (int i = 0; i < NUM_WEAK_FOES; i++) {
@@ -46,7 +49,7 @@ public class World implements Serializable, CellListener {
 			while (true) {
 				x = col.nextInt(MAP_SIZE);
 				y = row.nextInt(MAP_SIZE);
-				if (map[x][y].toString().equals("[ ]") && x != 9 && y != 9) {
+				if (map[x][y].toString().equals("[ ]") && x != playerRow && y != playerColumn) {
 					map[x][y] = new FoeCell(foe);
 					map[x][y].setListener(this);
 					break;
@@ -61,7 +64,7 @@ public class World implements Serializable, CellListener {
 			while (true) {
 				x = col.nextInt(MAP_SIZE);
 				y = row.nextInt(MAP_SIZE);
-				if (map[x][y].toString().equals("[ ]") && x != 9 && y != 9) {
+				if (map[x][y].toString().equals("[ ]") && x != playerRow && y != playerColumn) {
 					map[x][y] = senzuBean;
 					map[x][y].setListener(this);
 					break;
@@ -72,7 +75,7 @@ public class World implements Serializable, CellListener {
 		while (true) {
 			x = col.nextInt(MAP_SIZE);
 			y = row.nextInt(MAP_SIZE);
-			if (map[x][y].toString().equals("[ ]") && x != 9 && y != 9) {
+			if (map[x][y].toString().equals("[ ]") && x != playerRow && y != playerColumn) {
 				map[x][y] = dragonBall;
 				map[x][y].setListener(this);
 				break;
@@ -88,7 +91,8 @@ public class World implements Serializable, CellListener {
 					s += "[x]";
 				else
 					s += map[i][j];
-			s += "\n";
+			if (i < MAP_SIZE - 1)
+				s += "\n";
 		}
 		return s;
 	}
@@ -162,6 +166,14 @@ public class World implements Serializable, CellListener {
 			map[playerRow][playerColumn].onStep();
 		} else
 			throw new MapIndexOutOfBoundsException(playerRow, playerColumn);
+	}
+
+	public NonPlayableFighter getBoss() {
+		return boss;
+	}
+
+	public void setBoss(NonPlayableFighter boss) {
+		this.boss = boss;
 	}
 
 }

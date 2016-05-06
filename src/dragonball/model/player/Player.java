@@ -12,7 +12,7 @@ import dragonball.model.exceptions.NotASaiyanException;
 import dragonball.model.exceptions.NotEnoughAbilityPointsException;
 
 @SuppressWarnings("serial")
-public class Player implements Serializable{
+public class Player implements Serializable {
 	private String name;
 	private ArrayList<PlayableFighter> fighters;
 	private ArrayList<SuperAttack> superAttacks;
@@ -122,21 +122,41 @@ public class Player implements Serializable{
 	}
 
 	public void callDragon() {
-		if (listener != null)
+		dragonBalls -= 7;
+		notifyOnDragonCalled();
+	}
+
+	public void notifyOnDragonCalled() {
+		if (listener != null) {
 			listener.onDragonCalled();
+		}
+	}
+
+	public void notifyOnWishChosen(DragonWish wish) {
+		if (listener != null) {
+			listener.onWishChosen(wish);
+		}
 	}
 
 	public void chooseWish(DragonWish wish) {
-		if (wish.getType().equals(DragonWishType.SENZU_BEANS))
+		switch (wish.getType()) {
+		case SENZU_BEANS:
 			senzuBeans += wish.getSenzuBeans();
-		else if (wish.getType().equals(DragonWishType.ABILITY_POINTS))
+			break;
+		case ABILITY_POINTS:
 			activeFighter.setAbilityPoints(activeFighter.getAbilityPoints() + wish.getAbilityPoints());
-		else if (wish.getType().equals(DragonWishType.SUPER_ATTACK))
+			break;
+		case SUPER_ATTACK:
 			superAttacks.add(wish.getSuperAttack());
-		else
+			break;
+		case ULTIMATE_ATTACK:
 			ultimateAttacks.add(wish.getUltimateAttack());
-		if (listener != null)
-			listener.onWishChosen(wish);
+			break;
+		default:
+			break;
+		}
+
+		notifyOnWishChosen(wish);
 	}
 
 	public void createFighter(char race, String name) {
@@ -194,7 +214,8 @@ public class Player implements Serializable{
 		}
 	}
 
-	public void assignAttack(PlayableFighter fighter, SuperAttack newAttack, SuperAttack oldAttack) throws Exception {
+	public void assignAttack(PlayableFighter fighter, SuperAttack newAttack, SuperAttack oldAttack)
+			throws DuplicateAttackException, MaximumAttacksLearnedException {
 		if (fighter.getSuperAttacks().contains(newAttack))
 			throw new DuplicateAttackException(newAttack);
 		else {
@@ -213,7 +234,12 @@ public class Player implements Serializable{
 	}
 
 	public void assignAttack(PlayableFighter fighter, UltimateAttack newAttack, UltimateAttack oldAttack)
-			throws Exception {
+			throws DuplicateAttackException, NotASaiyanException, MaximumAttacksLearnedException {
+		
+		System.out.println("HERE we check");
+		System.out.println(newAttack);
+		if(oldAttack != null)
+		System.out.println(oldAttack.getName());
 		if (fighter.getUltimateAttacks().contains(newAttack))
 			throw new DuplicateAttackException(newAttack);
 		else {

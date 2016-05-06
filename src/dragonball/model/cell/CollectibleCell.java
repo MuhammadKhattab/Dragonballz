@@ -13,15 +13,12 @@ public class CollectibleCell extends Cell {
 	}
 
 	public String toString() {
-		char x = collectible.equals(Collectible.DRAGON_BALL) ? 'd' : 's';
-		return "[" + x + "]";
+		return "[" + Character.toLowerCase(collectible.name().charAt(0)) + "]";
 	}
 
 	@Override
 	public void onStep() {
-		CellListener l = getListener();
-		if (l != null)
-			l.onCollectibleFound(collectible);
+		notifyOnCollectibleFound(collectible);
 	}
 
 }

@@ -2,6 +2,8 @@ package dragonball.model.attack;
 
 import dragonball.model.battle.BattleOpponent;
 import dragonball.model.character.fighter.Fighter;
+import dragonball.model.exceptions.NotASaiyanException;
+import dragonball.model.exceptions.NotEnoughKiException;
 
 @SuppressWarnings("serial")
 public class PhysicalAttack extends Attack {
@@ -15,7 +17,7 @@ public class PhysicalAttack extends Attack {
 		return x.getPhysicalDamage() + 50;
 	}
 
-	public void onUse(BattleOpponent attacker, BattleOpponent defender, boolean defenderBlocking) throws Exception {
+	public void onUse(BattleOpponent attacker, BattleOpponent defender, boolean defenderBlocking) throws NotEnoughKiException {
 		super.onUse(attacker, defender, defenderBlocking);
 		Fighter x = (Fighter) attacker;
 		x.setKi(x.getKi() + 1);

@@ -3,6 +3,9 @@ package dragonball.model.battle;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
+
+import javax.swing.JOptionPane;
+
 import dragonball.model.attack.Attack;
 import dragonball.model.attack.PhysicalAttack;
 import dragonball.model.attack.SuperAttack;
@@ -10,11 +13,13 @@ import dragonball.model.attack.UltimateAttack;
 import dragonball.model.cell.Collectible;
 import dragonball.model.character.fighter.Fighter;
 import dragonball.model.character.fighter.Saiyan;
+import dragonball.model.exceptions.NotASaiyanException;
+import dragonball.model.exceptions.NotEnoughKiException;
 import dragonball.model.exceptions.NotEnoughSenzuBeansException;
 import dragonball.model.player.Player;
 
 @SuppressWarnings("serial")
-public class Battle implements Serializable{
+public class Battle implements Serializable {
 	private BattleOpponent me;
 	private BattleOpponent foe;
 	private BattleOpponent attacker;
@@ -22,18 +27,25 @@ public class Battle implements Serializable{
 	private boolean foeBlocking;
 	private BattleListener listener;
 
+	private String turn;
+
 	public Battle(BattleOpponent me, BattleOpponent foe) {
 		this.me = me;
 		this.foe = foe;
 		this.attacker = me;
+
+		setTurn("");
+		
 		Fighter meFighter = (Fighter) me;
 		meFighter.setHealthPoints(meFighter.getMaxHealthPoints());
 		meFighter.setKi(0);
 		meFighter.setStamina(meFighter.getMaxStamina());
+
 		Fighter foeFighter = (Fighter) foe;
 		foeFighter.setHealthPoints(foeFighter.getMaxHealthPoints());
 		foeFighter.setKi(0);
 		foeFighter.setStamina(foeFighter.getMaxStamina());
+
 		if (meFighter instanceof Saiyan)
 			((Saiyan) meFighter).setTransformed(false);
 	}
@@ -79,102 +91,141 @@ public class Battle implements Serializable{
 		return x;
 	}
 
-	public void attack(Attack attack) throws Exception {
-		if (attacker.equals(foe))
-			attack.onUse(attacker, me, meBlocking);
-		else
-			attack.onUse(attacker, foe, foeBlocking);
-		if (listener != null)
-			listener.onBattleEvent(new BattleEvent(this, BattleEventType.ATTACK, attack));
+	public void attack(Attack attack) throws NotEnoughKiException {
+		attack.onUse(attacker, getDefender(), (attacker == me && foeBlocking) || (attacker == foe && meBlocking));
+
+		setTurn(String.format("%s used %s!\nExpected Damage: %d", ((Fighter) attacker).getName(), attack.getName(),
+				attack.getAppliedDamage(attacker)));
+
+		notifyOnBattleEvent(new BattleEvent(this, BattleEventType.ATTACK, attack));
+
 		endTurn();
 	}
 
 	public void block() {
-		if (attacker.equals(me))
+		if (attacker == me) {
 			meBlocking = true;
-		else
+		} else if (attacker == foe) {
 			foeBlocking = true;
-		if (listener != null)
-			listener.onBattleEvent(new BattleEvent(this, BattleEventType.BLOCK));
+		}
+		setTurn(String.format("%s chose to block!", ((Fighter) attacker).getName()));
+
+		notifyOnBattleEvent(new BattleEvent(this, BattleEventType.BLOCK));
+
 		endTurn();
 	}
 
 	public void use(Player player, Collectible collectible) throws NotEnoughSenzuBeansException {
 		int senzu = player.getSenzuBeans();
 		if (collectible.equals(Collectible.SENZU_BEAN)) {
-			if (senzu>0) {
+			if (senzu > 0) {
 				Fighter x = player.getActiveFighter();
 				x.setHealthPoints(x.getMaxHealthPoints());
 				x.setStamina(x.getMaxStamina());
 				player.setSenzuBeans(senzu - 1);
-				if (listener != null)
-					listener.onBattleEvent(new BattleEvent(this, BattleEventType.USE, collectible));
+
+				setTurn("You used a senzu bean!");
+
+				notifyOnBattleEvent(new BattleEvent(this, BattleEventType.USE, collectible));
+
 				endTurn();
-			}
-			else {
+			} else {
 				throw new NotEnoughSenzuBeansException();
 			}
 		}
 	}
 
 	public BattleOpponent getDefender() {
-		return attacker.equals(me) ? foe : me;
+		return attacker == me ? foe : me;
 	}
 
-	public void play() throws Exception {
-		// TODO
-		Random x = new Random();
-		int i = x.nextInt(10);
-		if (i == 1)
-			block();
-		else {
-			Fighter fo = (Fighter) foe;
-			int k = fo.getKi();
-			Attack z = getAssignedAttacks().get(x.nextInt(getAssignedAttacks().size()));
-			if (z instanceof SuperAttack && k > 1) {
-				attack(z);
-			} else if (z instanceof UltimateAttack && k > 3) {
-				attack(z);
-			} else {
+	public void play() throws NotEnoughKiException {
+
+		Fighter foe = (Fighter) attacker;
+		Attack randomAttack;
+
+		if (foe.getKi() > 2) {
+			ArrayList<UltimateAttack> a = foe.getUltimateAttacks();
+			if (a.size() > 0) {
+				randomAttack = a.get(new Random().nextInt(a.size()));
+				attack(randomAttack);
+			} else
 				attack(new PhysicalAttack());
+		} else if (foe.getKi() > 1) {
+			if (new Random().nextBoolean()) {
+				ArrayList<SuperAttack> a = foe.getSuperAttacks();
+				if (a.size() > 0) {
+					randomAttack = a.get(new Random().nextInt(a.size()));
+					attack(randomAttack);
+				} else
+					attack(new PhysicalAttack());
+			} else {
+				if (((Fighter) getDefender()).getKi() > 1) {
+					if (new Random().nextBoolean()) {
+						if (foe.getStamina() > 0) {
+							block();
+						} else {
+							attack(new PhysicalAttack());
+						}
+					} else {
+						attack(new PhysicalAttack());
+					}
+				} else {
+					attack(new PhysicalAttack());
+				}
 			}
+		} else if (new Random().nextBoolean()) {
+			block();
+		} else {
+			attack(new PhysicalAttack());
 		}
+
 	}
 
 	public void start() {
-		if (listener != null) {
-			listener.onBattleEvent(new BattleEvent(this, BattleEventType.STARTED));
-			listener.onBattleEvent((new BattleEvent(this, BattleEventType.NEW_TURN)));
-		}
+		notifyOnBattleEvent(new BattleEvent(this, BattleEventType.STARTED));
+		notifyOnBattleEvent((new BattleEvent(this, BattleEventType.NEW_TURN)));
 	}
 
 	public void endTurn() {
-		// TODO
 		// reset block mode
 		if (attacker == me && foeBlocking)
 			foeBlocking = false;
 		else if (attacker == foe && meBlocking)
 			meBlocking = false;
+
 		if (((Fighter) me).getHealthPoints() == 0) {
-			if (listener != null)
-				listener.onBattleEvent(new BattleEvent(this, BattleEventType.ENDED, foe));
+			notifyOnBattleEvent(new BattleEvent(this, BattleEventType.ENDED, foe));
 		} else {
 			if (((Fighter) foe).getHealthPoints() == 0) {
-				if (listener != null)
-					listener.onBattleEvent(new BattleEvent(this, BattleEventType.ENDED, me));
+				notifyOnBattleEvent(new BattleEvent(this, BattleEventType.ENDED, me));
 			} else {
-				if (listener != null)
-					listener.onBattleEvent(new BattleEvent(this, BattleEventType.NEW_TURN));
-				attacker.onAttackerTurn();
-				getDefender().onDefenderTurn();
 				switchTurn();
+				notifyOnBattleEvent(new BattleEvent(this, BattleEventType.NEW_TURN));
 			}
 		}
 
 	}
 
+	public void notifyOnBattleEvent(BattleEvent e) {
+		if (listener != null) {
+			listener.onBattleEvent(e);
+		}
+	}
+
 	public void switchTurn() {
 		attacker = getDefender();
+		attacker.onDefenderTurn();
+		getDefender().onAttackerTurn();
+
+	}
+
+	public String getTurn() {
+		return turn;
+	}
+
+	public void setTurn(String turn) {
+		this.turn = turn;
 	}
 
 }

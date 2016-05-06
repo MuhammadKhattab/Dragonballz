@@ -2,6 +2,8 @@ package dragonball.model.cell;
 
 import java.io.*;
 
+import dragonball.model.character.fighter.NonPlayableFighter;
+
 @SuppressWarnings("serial")
 public abstract class Cell implements Serializable {
 
@@ -18,4 +20,17 @@ public abstract class Cell implements Serializable {
 	public void setListener(CellListener listener) {
 		this.listener = listener;
 	}
+
+	protected void notifyOnFoeEncountered(NonPlayableFighter foe) {
+		if (listener != null) {
+			listener.onFoeEncountered(foe);
+		}
+	}
+
+	protected void notifyOnCollectibleFound(Collectible collectible) {
+		if (listener != null) {
+			listener.onCollectibleFound(collectible);
+		}
+	}
+
 }

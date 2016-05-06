@@ -5,6 +5,8 @@ import java.io.Serializable;
 import dragonball.model.battle.BattleOpponent;
 import dragonball.model.character.fighter.Fighter;
 import dragonball.model.character.fighter.Saiyan;
+import dragonball.model.exceptions.NotASaiyanException;
+import dragonball.model.exceptions.NotEnoughKiException;
 
 @SuppressWarnings("serial")
 public abstract class Attack implements Serializable {
@@ -26,7 +28,7 @@ public abstract class Attack implements Serializable {
 
 	public abstract int getAppliedDamage(BattleOpponent attacker);
 
-	public void onUse(BattleOpponent attacker, BattleOpponent defender, boolean defenderBlocking) throws Exception {
+	public void onUse(BattleOpponent attacker, BattleOpponent defender, boolean defenderBlocking) throws NotEnoughKiException{
 		int damage = getAppliedDamage(attacker);
 		if (attacker instanceof Saiyan && ((Saiyan) attacker).isTransformed())
 			damage += (int) (.25 * damage);

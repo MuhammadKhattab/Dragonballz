@@ -3,6 +3,7 @@ package dragonball.model.attack;
 import dragonball.model.battle.BattleOpponent;
 import dragonball.model.character.fighter.Fighter;
 import dragonball.model.character.fighter.Saiyan;
+import dragonball.model.exceptions.NotASaiyanException;
 import dragonball.model.exceptions.NotEnoughKiException;
 
 @SuppressWarnings("serial")
@@ -16,7 +17,7 @@ public class UltimateAttack extends Attack {
 		return getDamage() + ((Fighter) attacker).getBlastDamage();
 	}
 
-	public void onUse(BattleOpponent attacker, BattleOpponent defender, boolean defenderBlocking) throws Exception {
+	public void onUse(BattleOpponent attacker, BattleOpponent defender, boolean defenderBlocking) throws NotEnoughKiException {
 		Fighter attackerFighter = (Fighter) attacker;
 		if (!(attacker instanceof Saiyan && ((Saiyan) attacker).isTransformed()))
 			if (attackerFighter.getKi() >= 3)

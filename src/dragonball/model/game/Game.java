@@ -1,6 +1,9 @@
 package dragonball.model.game;
 
 import java.util.*;
+
+import javax.swing.JOptionPane;
+
 import dragonball.model.attack.*;
 import dragonball.model.battle.Battle;
 import dragonball.model.battle.BattleEvent;
@@ -11,6 +14,7 @@ import dragonball.model.cell.EmptyCell;
 import dragonball.model.character.fighter.*;
 import dragonball.model.dragon.*;
 import dragonball.model.exceptions.MissingFieldException;
+import dragonball.model.exceptions.UnknownAttackTypeException;
 import dragonball.model.player.*;
 import dragonball.model.world.*;
 import java.io.*;
@@ -25,9 +29,10 @@ public class Game implements Serializable, PlayerListener, WorldListener, Battle
 	private ArrayList<Dragon> dragons;
 	private GameState state;
 	private GameListener listener;
-	private String saved;
+	private String lastSavedFile;
+	private String gainedSkills;
 
-	public Game() {
+	public Game() throws UnknownAttackTypeException, MissingFieldException {
 		world = new World();
 		weakFoes = new ArrayList<NonPlayableFighter>();
 		strongFoes = new ArrayList<NonPlayableFighter>();
@@ -37,26 +42,23 @@ public class Game implements Serializable, PlayerListener, WorldListener, Battle
 		player = new Player("Random");
 		player.setListener(this);
 		world.setListener(this);
+		
+		lastSavedFile = "";
+
 		try {
-			loadAttacks("Database-Attacks.csv");
-		} catch (IOException x) {
-			try {
-				attacks.clear();
-				loadAttacks("Database-Attacks-aux.csv");
-			} catch (IOException e) {
-				e.getMessage();
-			}
+			loadAttacks("data/Database-Attacks.csv");
+		} catch (dragonball.model.exceptions.InvalidFormatException e) {
+			attacks.clear();
+			loadAttacks("data/Database-Attacks-aux.csv");
 		}
+
 		try {
-			loadDragons("Database-Dragons.csv");
-		} catch (IOException x) {
-			try {
-				dragons.clear();
-				loadDragons("Database-Dragons-aux.csv");
-			} catch (IOException e) {
-				e.getMessage();
-			}
+			loadDragons("data/Database-Dragons.csv");
+		} catch (MissingFieldException e) {
+			dragons.clear();
+			loadDragons("data/Database-Dragons-aux.csv");
 		}
+
 		foeRange();
 		world.generateMap(weakFoes, strongFoes);
 	}
@@ -88,51 +90,63 @@ public class Game implements Serializable, PlayerListener, WorldListener, Battle
 		return list;
 	}
 
-	public void loadAttacks(String filePath) throws IOException {
+	public void loadAttacks(String filePath) throws UnknownAttackTypeException, MissingFieldException {
 		ArrayList<String[]> atts = loadCSV(filePath);
 		String[] a;
-		// file
 		for (int i = 0; i < atts.size(); i++) {
-			// line [SA, DANG, 250]
 			a = atts.get(i);
 			Attack x = null;
-			String message = "Attackz";
-			if (a.length == 3) {
-				if (a[0].equals("SA")) {
-					x = new SuperAttack(a[1], Integer.parseInt(a[2]));
+
+			if (a.length < 3) {
+				throw new MissingFieldException(
+						"File: " + filePath + ", Line: " + (i + 1) + ", Expected: 3, Missing: " + (3 - a.length),
+						filePath, i + 1, 3 - a.length);
+			}
+
+			if (a[0].equals("SA")) {
+				x = new SuperAttack(a[1], Integer.parseInt(a[2]));
+			} else {
+				if (a[0].equals("UA")) {
+					x = new UltimateAttack(a[1], Integer.parseInt(a[2]));
 				} else {
-					if (a[0].equals("UA")) {
-						x = new UltimateAttack(a[1], Integer.parseInt(a[2]));
+					if (a[0].equals("SS")) {
+						x = new SuperSaiyan();
 					} else {
-						if (a[0].equals("SS")) {
-							x = new SuperSaiyan();
-						} else {
-							if (a[0].equals("MC"))
-								x = new MaximumCharge();
-							else
-								throw new MissingFieldException(message, filePath, i + 1, 1);
-						}
+						if (a[0].equals("MC"))
+							x = new MaximumCharge();
+						else
+							throw new UnknownAttackTypeException("File: " + filePath + ", Line: " + (i + 1)
+									+ ", Attack Type: " + a[0] + " is undefined.", filePath, i + 1, a[0]);
 					}
 				}
-				if (x != null)
-					attacks.add(x);
-			} else
-				throw new MissingFieldException(message, filePath, i + 1, 3 - a.length);
+			}
+			if (x != null)
+				attacks.add(x);
 		}
 	}
 
-	public void loadFoes(String filePath) throws IOException {
+	public void loadFoes(String filePath) throws MissingFieldException {
+		strongFoes.clear();
+		weakFoes.clear();
+
 		ArrayList<String[]> foos = loadCSV(filePath);
 		String[] a, b, c;
 		ArrayList<SuperAttack> superA = null;
 		SuperAttack su = null;
 		ArrayList<UltimateAttack> ultimateA = null;
 		UltimateAttack ul = null;
-		// file
 		for (int i = 0; i < foos.size(); i += 3) {
-			// first line info
+
+			// first line: info
 			a = foos.get(i);
-			// second line super attacks
+
+			// if number of fields is less than expected.
+			if (a.length < 8)
+				throw new MissingFieldException(
+						"File: " + filePath + ", Line: " + (i + 1) + ", Expected: 8, Missing: " + (8 - a.length),
+						filePath, i + 1, 8 - a.length);
+
+			// second line: super attacks
 			b = foos.get(i + 1);
 			superA = new ArrayList<SuperAttack>();
 			// get arrayList of super attacks
@@ -140,10 +154,7 @@ public class Game implements Serializable, PlayerListener, WorldListener, Battle
 				// search for the damages
 				for (int k = 0; k < attacks.size(); k++) {
 					if (b[j].equals(attacks.get(k).getName())) {
-						if (b[j].equals("Maximum Charge"))
-							su = new MaximumCharge();
-						else
-							su = new SuperAttack(b[j], attacks.get(k).getDamage());
+						su = new SuperAttack(b[j], attacks.get(k).getDamage());
 						break;
 					}
 				}
@@ -151,7 +162,7 @@ public class Game implements Serializable, PlayerListener, WorldListener, Battle
 					superA.add(su);
 				su = null;
 			}
-			// third line ultimate attacks
+			// third line: ultimate attacks
 			c = foos.get(i + 2);
 			// get arrayList of ultimate attacks
 			ultimateA = new ArrayList<UltimateAttack>();
@@ -171,24 +182,18 @@ public class Game implements Serializable, PlayerListener, WorldListener, Battle
 				ul = null;
 			}
 			boolean str;
-			if (a.length == 8) {
-				if (a[7].equals("TRUE"))
-					str = true;
-				else
-					str = false;
-				NonPlayableFighter z = new NonPlayableFighter(a[0], Integer.parseInt(a[1]), Integer.parseInt(a[2]),
-						Integer.parseInt(a[3]), Integer.parseInt(a[4]), Integer.parseInt(a[5]), Integer.parseInt(a[6]),
-						str, superA, ultimateA);
-				if (str)
-					strongFoes.add(z);
-				else
-					weakFoes.add(z);
-			} else
-				throw new MissingFieldException("Foez", filePath, i + 1, 8 - a.length);
+			str = a[7].equals("TRUE") ? true : false;
+			NonPlayableFighter z = new NonPlayableFighter(a[0], Integer.parseInt(a[1]), Integer.parseInt(a[2]),
+					Integer.parseInt(a[3]), Integer.parseInt(a[4]), Integer.parseInt(a[5]), Integer.parseInt(a[6]), str,
+					superA, ultimateA);
+			if (str)
+				strongFoes.add(z);
+			else
+				weakFoes.add(z);
 		}
 	}
 
-	public void loadDragons(String filePath) throws IOException {
+	public void loadDragons(String filePath) throws MissingFieldException {
 		ArrayList<String[]> dragonz = loadCSV(filePath);
 		String[] a, b, c;
 		ArrayList<SuperAttack> superA;
@@ -199,7 +204,7 @@ public class Game implements Serializable, PlayerListener, WorldListener, Battle
 		for (int i = 0; i < dragonz.size(); i += 3) {
 			// first line info
 			a = dragonz.get(i);
-			if (a.length != 3)
+			if (a.length < 3)
 				throw new MissingFieldException("Dragonz", filePath, i + 1, 3 - a.length);
 			// second line super attacks
 			b = dragonz.get(i + 1);
@@ -274,12 +279,11 @@ public class Game implements Serializable, PlayerListener, WorldListener, Battle
 
 	@Override
 	public void onDragonCalled() {
-		Dragon x = dragons.get(new Random().nextInt(dragons.size()));
 		state = GameState.DRAGON;
-		if (listener != null)
-			listener.onDragonCalled(x);
-		if (player != null)
-			player.setDragonBalls(player.getDragonBalls() - 7);
+
+		Dragon dragon = dragons.get(new Random().nextInt(dragons.size()));
+
+		notifyOnDragonCalled(dragon);
 	}
 
 	@Override
@@ -289,10 +293,10 @@ public class Game implements Serializable, PlayerListener, WorldListener, Battle
 
 	@Override
 	public void onFoeEncountered(NonPlayableFighter foe) {
+		state = GameState.BATTLE;
 		Battle x = new Battle(player.getActiveFighter(), foe);
 		x.setListener(this);
 		x.start();
-		state = GameState.BATTLE;
 	}
 
 	@Override
@@ -304,65 +308,78 @@ public class Game implements Serializable, PlayerListener, WorldListener, Battle
 			if (player.getDragonBalls() >= 7)
 				player.callDragon();
 		}
-		if (listener != null)
-			listener.onCollectibleFound(collectible);
+		notifyOnCollectibleFound(collectible);
 	}
 
-	public void foeRange() {
+	public void foeRange() throws MissingFieldException {
 		int N = 1, maxlvl = 1;
 		if (player != null)
 			maxlvl = player.getMaxFighterLevel();
 		N = (maxlvl - 1) / 10 + 1;
 		try {
-			loadFoes("Database-Foes-Range" + N + ".csv");
+			loadFoes("data/Database-Foes-Range" + N + ".csv");
 		} catch (IOException e) {
-			try {
-				weakFoes.clear();
-				strongFoes.clear();
-				loadFoes("Database-Foes-aux.csv");
-			} catch (IOException x) {
-				x.getMessage();
-			}
+			weakFoes.clear();
+			strongFoes.clear();
+			loadFoes("data/Database-Foes-aux.csv");
 		}
 
 	}
 
 	@Override
 	public void onBattleEvent(BattleEvent e) {
-		if (listener != null)
-			listener.onBattleEvent(e);
 		if (e.getType().equals(BattleEventType.ENDED)) {
 			state = GameState.WORLD;
 			Battle b = (Battle) e.getSource();
 			NonPlayableFighter fo = (NonPlayableFighter) b.getFoe();
 			PlayableFighter meh = (PlayableFighter) b.getMe();
-			if (meh.equals(e.getWinner())) {
+			if (e.getWinner() == meh) {
 				int oldXP = meh.getXp();
 				meh.setXp(oldXP + fo.getLevel() * 5);
+
 				ArrayList<SuperAttack> fozsu = fo.getSuperAttacks();
+				gainedSkills = "Learned Super Attacks:\n";
 				for (SuperAttack x : fozsu)
-					if (!player.getSuperAttacks().contains(x))
+					if (!player.getSuperAttacks().contains(x)) {
 						player.getSuperAttacks().add(x);
+						gainedSkills += String.format(" + %s\n", x.getName());
+					}
+
 				ArrayList<UltimateAttack> fozult = fo.getUltimateAttacks();
 				for (UltimateAttack x : fozult)
-					if (!player.getUltimateAttacks().contains(x))
+					if (!player.getUltimateAttacks().contains(x)) {
 						player.getUltimateAttacks().add(x);
+						gainedSkills += String.format(" + %s\n", x.getName());
+					}
+
 				if (fo.isStrong()) {
 					player.setExploredMaps(player.getExploredMaps() + 1);
-					foeRange();
+					try {
+						foeRange();
+					} catch (MissingFieldException e1) {
+						JOptionPane.showMessageDialog(null, e1.getMessage());
+					}
 					world.generateMap(weakFoes, strongFoes);
 				} else {
 					world.getMap()[world.getPlayerRow()][world.getPlayerColumn()] = new EmptyCell();
 					world.getMap()[world.getPlayerRow()][world.getPlayerColumn()].setListener(world);
 				}
+
+				state = GameState.WORLD;
 			} else {
-				if (saved == null)
+				try {
+					load(lastSavedFile);
+				} catch (FileNotFoundException exp) {
+					world = new World();
 					world.generateMap(weakFoes, strongFoes);
-				else
-					load(saved);
+					world.setListener(this);
+					state = GameState.WORLD;
+				} catch (Exception exp) {
+					exp.printStackTrace();
+				}
 			}
 		}
-
+		notifyOnBattleEvent(e);
 	}
 
 	public GameListener getListener() {
@@ -373,43 +390,58 @@ public class Game implements Serializable, PlayerListener, WorldListener, Battle
 		this.listener = listener;
 	}
 
-	public void save(String fileName) {
-		try {
-			FileOutputStream fileOut = new FileOutputStream(fileName);
-			ObjectOutputStream out = new ObjectOutputStream(fileOut);
-			out.writeObject(this);
-			out.close();
-			fileOut.close();
-			saved = fileName;
-		} catch (IOException i) {
-			i.printStackTrace();
+	public void save(String fileName) throws IOException {
+		FileOutputStream fileOut = new FileOutputStream(fileName);
+		ObjectOutputStream out = new ObjectOutputStream(fileOut);
+		out.writeObject(this);
+		out.close();
+		fileOut.close();
+		lastSavedFile = fileName;
+	}
+
+	public void load(String fileName) throws IOException, ClassNotFoundException {
+		FileInputStream fileIn = new FileInputStream(new File(fileName));
+		ObjectInputStream in = new ObjectInputStream(fileIn);
+		Game x = (Game) in.readObject();
+		in.close();
+		fileIn.close();
+		player = x.player;
+		player.setListener(this);
+		world = x.world;
+		world.setListener(this);
+		weakFoes = x.weakFoes;
+		strongFoes = x.strongFoes;
+		attacks = x.attacks;
+		dragons = x.dragons;
+		state = x.state;
+		listener = x.listener;
+		lastSavedFile = fileName;
+		x = null;
+	}
+
+	public void notifyOnCollectibleFound(Collectible collectible) {
+		if (listener != null) {
+			listener.onCollectibleFound(collectible);
 		}
 	}
 
-	public void load(String fileName) {
-		try {
-			FileInputStream fileIn = new FileInputStream(fileName);
-			ObjectInputStream in = new ObjectInputStream(fileIn);
-			Game x = (Game) in.readObject();
-			in.close();
-			fileIn.close();
-			player = x.player;
-			player.setListener(this);
-			world = x.world;
-			world.setListener(this);
-			weakFoes = x.weakFoes;
-			strongFoes = x.strongFoes;
-			attacks = x.attacks;
-			dragons = x.dragons;
-			state = x.state;
-			listener = x.listener;
-			saved = fileName;
-			x = null;
-		} catch (IOException i) {
-			i.printStackTrace();
-			return;
-		} catch (ClassNotFoundException c) {
-			c.printStackTrace();
+	public void notifyOnBattleEvent(BattleEvent e) {
+		if (listener != null) {
+			listener.onBattleEvent(e);
 		}
+	}
+
+	public void notifyOnDragonCalled(Dragon dragon) {
+		if (listener != null) {
+			listener.onDragonCalled(dragon);
+		}
+	}
+
+	public String getGainedSkills() {
+		return gainedSkills;
+	}
+
+	public String getLastSavedFile() {
+		return lastSavedFile;
 	}
 }

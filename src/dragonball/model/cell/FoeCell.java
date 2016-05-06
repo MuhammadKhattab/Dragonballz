@@ -15,14 +15,11 @@ public class FoeCell extends Cell {
 	}
 
 	public String toString() {
-		char x = foe.isStrong() ? 'b' : 'w';
-		return "[" + x + "]";
+		return foe.isStrong() ? "[b]" : "[w]";
 	}
 
 	@Override
 	public void onStep() {
-		CellListener l = getListener();
-		if (l != null)
-			l.onFoeEncountered(getFoe());
+		notifyOnFoeEncountered(foe);
 	}
 }
