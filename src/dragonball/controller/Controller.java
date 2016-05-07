@@ -209,20 +209,20 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 						worldView.addFihgter();
 					} else {
 						if (((JButton) e.getSource()).getName().equals("upgrade")) {
-							UpgradeFighterView up = new UpgradeFighterView(game.getPlayer());
-							worldView.setUpgradeFighter(up);
-							up.getBack().addMouseListener(this);
-							up.getbDamage().addMouseListener(this);
-							up.getpDamage().addMouseListener(this);
-							up.getmKi().addMouseListener(this);
-							up.getmStamina().addMouseListener(this);
-							up.getMaxHP().addMouseListener(this);
+							upgradeView = new UpgradeFighterView(game.getPlayer());
+							worldView.setUpgradeFighter(upgradeView);
+							upgradeView.getBack().addMouseListener(this);
+							upgradeView.getbDamage().addMouseListener(this);
+							upgradeView.getpDamage().addMouseListener(this);
+							upgradeView.getmKi().addMouseListener(this);
+							upgradeView.getmStamina().addMouseListener(this);
+							upgradeView.getMaxHP().addMouseListener(this);
 
-							up.getOk().addMouseListener(this);
-							up.getNewSupersBox().addMouseListener(this);
-							up.getNewUltimatesBox().addMouseListener(this);
-							up.getOldSupersBox().addMouseListener(this);
-							up.getOldUltimatesBox().addMouseListener(this);
+							upgradeView.getOk().addMouseListener(this);
+							upgradeView.getNewSupersBox().addMouseListener(this);
+							upgradeView.getNewUltimatesBox().addMouseListener(this);
+							upgradeView.getOldSupersBox().addMouseListener(this);
+							upgradeView.getOldUltimatesBox().addMouseListener(this);
 
 							worldView.setVisible(false);
 						} else if (((JButton) e.getSource()).getName().equals("back")) {
@@ -308,6 +308,7 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 
 							PlayableFighter active = game.getPlayer().getActiveFighter();
 							try {
+								System.out.println(upgradeView.getNewSupersBox() == null);
 								String nName = (String) upgradeView.getNewSupersBox().getSelectedItem();
 								if (nName != null) {
 									String oName = (String) upgradeView.getOldSupersBox().getSelectedItem();

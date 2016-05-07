@@ -18,10 +18,12 @@ public class BattleView extends JFrame {
 	private JScrollPane scrollPane;
 	private JTextArea comments;
 
-	private JPanel fighter;
-	private JPanel foe;
+	private JPanel fighterData;
+	private JPanel foeData;
 	private JPanel upper;
 	private JPanel buttons;
+	private JPanel fighter;
+	private JPanel foe;
 
 	private JLabel fighterLevel;
 	private JLabel fighterName;
@@ -55,7 +57,6 @@ public class BattleView extends JFrame {
 
 	public BattleView(Battle battle) {
 		super("DragonBallZ");
-		// setContentPane(new JLabel(new ImageIcon("resources/images/")));
 		setLayout(new BorderLayout());
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 
@@ -67,63 +68,97 @@ public class BattleView extends JFrame {
 		fighterIcon = new JLabel(icon);
 		fighterIcon.setBackground(new Color(159, 190, 223));
 
-		add(fighterIcon, BorderLayout.WEST);
+		fighter = new JPanel(new BorderLayout());
+		fighter.setBackground(new Color(160, 190, 223));
+		fighter.add(fighterIcon, BorderLayout.CENTER);
 
 		icon = WorldView.resizeIcon("save.png", 50, 50);
 
 		superAttacks = ((Fighter) battle.getMe()).getSuperAttacks();
 		ultimateAttacks = ((Fighter) battle.getMe()).getUltimateAttacks();
 
+		icon = WorldView.resizeIcon("name.png", 50, 50);
 		fighterName = new JLabel("Fighter name: " + ((Fighter) battle.getMe()).getName());
+		fighterName.setIcon(icon);
+		
+		foeName = new JLabel("Foe name: " + ((Fighter) battle.getFoe()).getName());
+		foeName.setIcon(icon);
+		
+		icon = WorldView.resizeIcon("level.png", 50, 50);
 		fighterLevel = new JLabel("Fighter level: " + ((Fighter) battle.getMe()).getLevel());
+		fighterLevel.setIcon(icon);
+		
+		foeLevel = new JLabel("Foe level: " + ((Fighter) battle.getFoe()).getLevel());
+		foeLevel.setIcon(icon);
+		
+		icon = WorldView.resizeIcon("ki.png", 50, 50);
 		fighterKi = new JLabel(
 				"Fighter ki: " + ((Fighter) battle.getMe()).getKi() + "/" + ((Fighter) battle.getMe()).getMaxKi());
-		fighterStamina = new JLabel("Fighter stamina: " + ((Fighter) battle.getMe()).getStamina() + "/"
-				+ ((Fighter) battle.getMe()).getMaxStamina());
-		fighterHealth = new JLabel("Fighter health: " + ((Fighter) battle.getMe()).getHealthPoints() + "/"
-				+ ((Fighter) battle.getMe()).getMaxHealthPoints());
-		fighterState = new JLabel("Fighter State: Attacker");
-
-		fighter = new JPanel();
-		fighter.setLayout(new GridLayout(0, 1));
-		fighter.setBackground(new Color(179, 217, 255));
-		fighter.add(fighterName);
-		fighter.add(fighterLevel);
-		fighter.add(fighterKi);
-		fighter.add(fighterStamina);
-		fighter.add(fighterHealth);
-		fighter.add(fighterState);
-
-		foeName = new JLabel("Foe name: " + ((Fighter) battle.getFoe()).getName());
-		foeLevel = new JLabel("Foe level: " + ((Fighter) battle.getFoe()).getLevel());
+		fighterKi.setIcon(icon);
+		
 		foeKi = new JLabel(
 				"Foe ki: " + ((Fighter) battle.getFoe()).getKi() + "/" + ((Fighter) battle.getFoe()).getMaxKi());
+		foeKi.setIcon(icon);
+		
+		icon = WorldView.resizeIcon("stamina.png", 50, 50);
+		fighterStamina = new JLabel("Fighter stamina: " + ((Fighter) battle.getMe()).getStamina() + "/"
+				+ ((Fighter) battle.getMe()).getMaxStamina());
+		fighterStamina.setIcon(icon);
+	
 		foeStamina = new JLabel("Foe stamina: " + ((Fighter) battle.getFoe()).getStamina() + "/"
 				+ ((Fighter) battle.getMe()).getMaxStamina());
+		foeStamina.setIcon(icon);
+		
+		icon = WorldView.resizeIcon("hpb.png", 50, 50);
+		fighterHealth = new JLabel("Fighter health: " + ((Fighter) battle.getMe()).getHealthPoints() + "/"
+				+ ((Fighter) battle.getMe()).getMaxHealthPoints());
+		fighterHealth.setIcon(icon);
+
 		foeHealth = new JLabel("Foe health: " + ((Fighter) battle.getFoe()).getHealthPoints() + "/"
 				+ ((Fighter) battle.getFoe()).getMaxHealthPoints());
+		foeHealth.setIcon(icon);
+		
+		icon = WorldView.resizeIcon("state.png", 50, 50);
+		fighterState = new JLabel("Fighter State: Attacker");
+		fighterState.setIcon(icon);
+		
 		foeState = new JLabel("Foe State: Defender");
+		foeState.setIcon(icon);
+		
+		fighterData = new JPanel();
+		fighterData.setLayout(new GridLayout(0, 1));
+		fighterData.setBackground(new Color(179, 217, 255));
+		fighterData.add(fighterName);
+		fighterData.add(fighterLevel);
+		fighterData.add(fighterKi);
+		fighterData.add(fighterStamina);
+		fighterData.add(fighterHealth);
+		fighterData.add(fighterState);
 
 		icon = new ImageIcon(String.format("resources/images/%s idle.png", foe()));
 		foeIcon = new JLabel(icon);
-		foeIcon.setBackground(new Color(159, 190, 223));
 
-		add(foeIcon, BorderLayout.EAST);
+		foe = new JPanel(new BorderLayout());
+		foe.setBackground(new Color(160, 190, 223));
+		foe.add(foeIcon, BorderLayout.CENTER);
 
-		foe = new JPanel();
-		foe.setLayout(new GridLayout(0, 1));
-		foe.setBackground(new Color(209, 179, 255));
-		foe.add(foeName);
-		foe.add(foeLevel);
-		foe.add(foeKi);
-		foe.add(foeStamina);
-		foe.add(foeHealth);
-		foe.add(foeState);
+		foeData = new JPanel();
+		foeData.setLayout(new GridLayout(0, 1));
+		foeData.setBackground(new Color(209, 179, 255));
+		foeData.add(foeName);
+		foeData.add(foeLevel);
+		foeData.add(foeKi);
+		foeData.add(foeStamina);
+		foeData.add(foeHealth);
+		foeData.add(foeState);
 
 		if ((PlayableFighter) (battle.getMe()) instanceof Saiyan) {
+			icon = WorldView.resizeIcon("transformed.png", 50, 50);
 			transformed = new JLabel("Transformed :  No");
-			fighter.add(transformed);
-			foe.add(new JLabel(""));
+			transformed.setIcon(icon);
+			
+			fighterData.add(transformed);
+			foeData.add(new JLabel(""));
 		}
 
 		icon = WorldView.resizeIcon("block.png", 50, 50);
@@ -175,13 +210,14 @@ public class BattleView extends JFrame {
 		buttons.setBackground(new Color(159, 190, 223));
 
 		upper = new JPanel(new GridLayout(0, 2));
-		upper.add(fighter);
-		upper.add(foe);
+		upper.add(fighterData);
+		upper.add(foeData);
 
 		add(upper, BorderLayout.NORTH);
 		add(scrollPane, BorderLayout.CENTER);
 		add(buttons, BorderLayout.SOUTH);
-		setBackground(new Color(159, 190, 223));
+		add(foe, BorderLayout.EAST);
+		add(fighter, BorderLayout.WEST);
 
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowDestroyer());
