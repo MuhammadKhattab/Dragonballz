@@ -65,6 +65,7 @@ public class BattleView extends JFrame {
 		ImageIcon icon = new ImageIcon(String.format("resources/images/%s idle.png", race()));
 
 		fighterIcon = new JLabel(icon);
+		fighterIcon.setBackground(new Color(159, 190, 223));
 
 		add(fighterIcon, BorderLayout.WEST);
 
@@ -105,6 +106,7 @@ public class BattleView extends JFrame {
 
 		icon = new ImageIcon(String.format("resources/images/%s idle.png", foe()));
 		foeIcon = new JLabel(icon);
+		foeIcon.setBackground(new Color(159, 190, 223));
 
 		add(foeIcon, BorderLayout.EAST);
 
@@ -137,7 +139,7 @@ public class BattleView extends JFrame {
 		use.setName("use");
 		use.setIcon(icon);
 		use.setBackground(new Color(204, 102, 102));
-		
+
 		icon = WorldView.resizeIcon("physical attack.png", 50, 50);
 
 		physical = new JButton("Physical Attack");
@@ -151,7 +153,7 @@ public class BattleView extends JFrame {
 		zuper.setName("supAttack");
 		zuper.setIcon(icon);
 		zuper.setBackground(new Color(204, 102, 102));
-		
+
 		icon = WorldView.resizeIcon("ultimate attack.png", 50, 50);
 
 		ultimate = new JButton("Ultimate Attack");
@@ -162,6 +164,7 @@ public class BattleView extends JFrame {
 		comments = new JTextArea("Fight!");
 		comments.setEditable(false);
 		scrollPane = new JScrollPane(comments);
+		comments.setBackground(new Color(159, 190, 223));
 
 		buttons = new JPanel();
 		buttons.add(physical);
@@ -169,6 +172,7 @@ public class BattleView extends JFrame {
 		buttons.add(ultimate);
 		buttons.add(block);
 		buttons.add(use);
+		buttons.setBackground(new Color(159, 190, 223));
 
 		upper = new JPanel(new GridLayout(0, 2));
 		upper.add(fighter);
@@ -177,6 +181,7 @@ public class BattleView extends JFrame {
 		add(upper, BorderLayout.NORTH);
 		add(scrollPane, BorderLayout.CENTER);
 		add(buttons, BorderLayout.SOUTH);
+		setBackground(new Color(159, 190, 223));
 
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowDestroyer());
@@ -249,12 +254,10 @@ public class BattleView extends JFrame {
 	// }
 
 	public void update() {
-
+		foeIdle();
 		new java.util.Timer().schedule(new java.util.TimerTask() {
 			@Override
 			public void run() {
-				foeIdle();
-
 				String fighter = "Fighter State: ";
 				String foe = "Foe State: ";
 				if (battle.getMe().equals(battle.getAttacker())) {
@@ -267,7 +270,7 @@ public class BattleView extends JFrame {
 				fighterState.setText(fighter);
 				foeState.setText(foe);
 			}
-		}, 1000);
+		}, 500);
 
 		String turn = battle.getTurn();
 		if (turn.length() > 0)
@@ -351,8 +354,14 @@ public class BattleView extends JFrame {
 	}
 
 	public void foePhysicalAttack() {
-		ImageIcon icon = new ImageIcon(String.format("resources/images/%s attacks.png", foe()));
-		foeIcon.setIcon(icon);
+		new java.util.Timer().schedule(new java.util.TimerTask() {
+			@Override
+			public void run() {
+				ImageIcon icon = new ImageIcon(String.format("resources/images/%s attacks.png", foe()));
+				foeIcon.setIcon(icon);
+			}
+		}, 1000);
+
 	}
 
 	public void foeIdle() {
@@ -364,9 +373,8 @@ public class BattleView extends JFrame {
 		return "foe1";
 	}
 
-	// public static void main(String[] args) {
-	// BattleView x = new BattleView(new Battle(new Saiyan("S"), new
-	// Saiyan("d")));
-	// }
+	public static void main(String[] args) {
+		BattleView x = new BattleView(new Battle(new Saiyan("S"), new Saiyan("d")));
+	}
 
 }

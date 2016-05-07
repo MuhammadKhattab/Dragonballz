@@ -1,12 +1,7 @@
 package dragonball.controller;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -25,7 +20,7 @@ import dragonball.model.exceptions.MissingFieldException;
 import dragonball.model.exceptions.UnknownAttackTypeException;
 import dragonball.model.game.Game;
 import dragonball.model.player.Player;
-import dragonball.view.WindowDestroyer;
+import dragonball.view.*;
 
 @SuppressWarnings("serial")
 public class Main extends JFrame implements MouseListener {
@@ -33,14 +28,6 @@ public class Main extends JFrame implements MouseListener {
 	private Controller controller;
 
 	public Main() {
-
-		ImageIcon icon = new ImageIcon("resources/images/start_background.png");
-		Image image = icon.getImage();
-		Image nimage = image.getScaledInstance(1400, 800, java.awt.Image.SCALE_SMOOTH);
-		icon = new ImageIcon(nimage);
-
-		// JLayeredPane background = new JLayeredPane();
-		// background.setOpaque(false);
 
 		setBounds(50, 50, 1000, 650);
 		setTitle("DragonBallZ");
@@ -73,12 +60,10 @@ public class Main extends JFrame implements MouseListener {
 
 		JPanel pan = new JPanel();
 		pan.setLayout(new GridLayout(3, 0));
+		pan.setBackground(new Color(179, 204, 255));
 		pan.add(startGame);
 		pan.add(load);
 		pan.add(code);
-
-		// background.add(pan, BorderLayout.CENTER);
-		// add(background,BorderLayout.CENTER);
 
 		add(pan, BorderLayout.CENTER);
 

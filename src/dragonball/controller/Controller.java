@@ -18,21 +18,6 @@ import dragonball.view.*;
 @SuppressWarnings("serial")
 public class Controller implements GameListener, MouseListener, KeyListener, Serializable {
 
-	// TODO
-	// save then lose a battle -> battle view won't disappear
-
-	// TODO icons:
-	// physical damage
-	// blast damage
-	// ki
-	// stamina
-	// abiltiy points
-	// level
-	// fighter name
-	// ultimate attack
-	// transformed saiyan
-	// current turn
-
 	private Game game;
 	private Dragon dragon;
 	private Battle battle;
@@ -41,7 +26,7 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 	private WorldView worldView;
 	private BattleView battleView;
 	private DragonView dragonView;
-	private AssignAttackView assignAttackView;
+	private UpgradeFighterView upgradeView;
 
 	public Controller(Game game) {
 		this.game = game;
@@ -63,7 +48,6 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 		worldView.getNewFighter().addMouseListener(this);
 		worldView.update();
 		worldView.getUpgrade().addMouseListener(this);
-		worldView.getAssignAttacks().addMouseListener(this);
 		worldView.getSave().addMouseListener(this);
 	}
 
@@ -118,7 +102,9 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 						}
 					}
 				}
+
 				battleView.update();
+
 			} else {
 				if (e.getType() == BattleEventType.ENDED) {
 					if (e.getWinner().equals(game.getPlayer().getActiveFighter())) {
@@ -219,154 +205,149 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 						worldView.updateRace();
 					}
 				} else {
-					if (((JButton) e.getSource()).getName().equals("assign")) {
-						assignAttackView = new AssignAttackView(game.getPlayer());
-						assignAttackView.getOk().addMouseListener(this);
-						assignAttackView.getNewSupers().addMouseListener(this);
-						assignAttackView.getOldSupers().addMouseListener(this);
-						assignAttackView.getNewUltimates().addMouseListener(this);
-						assignAttackView.getOldUltimates().addMouseListener(this);
+					if (((JButton) e.getSource()).getName().equals("new")) {
+						worldView.addFihgter();
 					} else {
-						if (((JButton) e.getSource()).getName().equals("new")) {
-							worldView.addFihgter();
-						} else {
-							if (((JButton) e.getSource()).getName().equals("upgrade")) {
-								UpgradeFighterView up = new UpgradeFighterView(game.getPlayer().getActiveFighter());
-								worldView.setUpgradeFighter(up);
-								up.getBack().addMouseListener(this);
-								up.getbDamage().addMouseListener(this);
-								up.getpDamage().addMouseListener(this);
-								up.getmKi().addMouseListener(this);
-								up.getmStamina().addMouseListener(this);
-								up.getMaxHP().addMouseListener(this);
-								worldView.setVisible(false);
-							} else if (((JButton) e.getSource()).getName().equals("back")) {
-								worldView.getUpgradeFighter().setVisible(false);
-								worldView.setVisible(true);
-								worldView.update();
-							} else if (((JButton) e.getSource()).getName().equals("hp")) {
-								upgrade('H');
-							} else if (((JButton) e.getSource()).getName().equals("phy")) {
-								upgrade('P');
-							} else if (((JButton) e.getSource()).getName().equals("blast")) {
-								upgrade('B');
-							} else if (((JButton) e.getSource()).getName().equals("ki")) {
-								upgrade('K');
-							} else if (((JButton) e.getSource()).getName().equals("stamina")) {
-								upgrade('S');
-							} else if (((JButton) e.getSource()).getName().equals("save")) {
-								try {
-									String file = JOptionPane.showInputDialog("Enter file name: ");
-									check = "data/" + file + ".csv";
-									game.save(check);
-									ArrayList<String> saves = new ArrayList<String>();
-									try {
-										saves = Main.loadSaves();
-										saves.add(file);
+						if (((JButton) e.getSource()).getName().equals("upgrade")) {
+							UpgradeFighterView up = new UpgradeFighterView(game.getPlayer());
+							worldView.setUpgradeFighter(up);
+							up.getBack().addMouseListener(this);
+							up.getbDamage().addMouseListener(this);
+							up.getpDamage().addMouseListener(this);
+							up.getmKi().addMouseListener(this);
+							up.getmStamina().addMouseListener(this);
+							up.getMaxHP().addMouseListener(this);
 
-										ObjectOutputStream oos = new ObjectOutputStream(
-												new FileOutputStream(new File("data/all saved files.csv")));
-										oos.writeObject(saves);
-										oos.close();
-									} catch (ClassNotFoundException e1) {
-										JOptionPane.showMessageDialog(null, e1.getMessage());
-									}
-								} catch (IOException e1) {
+							up.getOk().addMouseListener(this);
+							up.getNewSupersBox().addMouseListener(this);
+							up.getNewUltimatesBox().addMouseListener(this);
+							up.getOldSupersBox().addMouseListener(this);
+							up.getOldUltimatesBox().addMouseListener(this);
+
+							worldView.setVisible(false);
+						} else if (((JButton) e.getSource()).getName().equals("back")) {
+							worldView.getUpgradeFighter().setVisible(false);
+							worldView.setVisible(true);
+							worldView.update();
+						} else if (((JButton) e.getSource()).getName().equals("hp")) {
+							upgrade('H');
+						} else if (((JButton) e.getSource()).getName().equals("phy")) {
+							upgrade('P');
+						} else if (((JButton) e.getSource()).getName().equals("blast")) {
+							upgrade('B');
+						} else if (((JButton) e.getSource()).getName().equals("ki")) {
+							upgrade('K');
+						} else if (((JButton) e.getSource()).getName().equals("stamina")) {
+							upgrade('S');
+						} else if (((JButton) e.getSource()).getName().equals("save")) {
+							try {
+								String file = JOptionPane.showInputDialog("Enter file name: ");
+								check = "data/" + file + ".csv";
+								game.save(check);
+								ArrayList<String> saves = new ArrayList<String>();
+								try {
+									saves = Main.loadSaves();
+									saves.add(file);
+
+									ObjectOutputStream oos = new ObjectOutputStream(
+											new FileOutputStream(new File("data/all saved files.csv")));
+									oos.writeObject(saves);
+									oos.close();
+								} catch (ClassNotFoundException e1) {
 									JOptionPane.showMessageDialog(null, e1.getMessage());
 								}
-							} else if (((JButton) e.getSource()).getName().equals("block")) {
-								battle.block();
-								battleView.update();
-							} else if (((JButton) e.getSource()).getName().equals("use")) {
-								try {
-									battle.use(game.getPlayer(), Collectible.SENZU_BEAN);
-								} catch (NotEnoughSenzuBeansException e1) {
-									JOptionPane.showMessageDialog(null, e1.getMessage());
+							} catch (IOException e1) {
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							}
+						} else if (((JButton) e.getSource()).getName().equals("block")) {
+							battle.block();
+							battleView.update();
+						} else if (((JButton) e.getSource()).getName().equals("use")) {
+							try {
+								battle.use(game.getPlayer(), Collectible.SENZU_BEAN);
+							} catch (NotEnoughSenzuBeansException e1) {
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							}
+							battleView.update();
+						} else if (((JButton) e.getSource()).getName().equals("phyAttack")) {
+							try {
+								battleView.physicalAttack();
+								battle.attack(new PhysicalAttack());
+							} catch (NotEnoughKiException e1) {
+							}
+
+						} else if (((JButton) e.getSource()).getName().equals("supAttack")) {
+							String x = battleView.showSuper();
+							Attack att = (Attack) getsuper(x, game.getPlayer().getActiveFighter().getSuperAttacks());
+							try {
+								if (att != null) {
+									battle.attack(att);
+								} else {
+									JOptionPane.showMessageDialog(null,
+											"You didn't assign any super attacks to this fighter!");
 								}
-								battleView.update();
-							} else if (((JButton) e.getSource()).getName().equals("phyAttack")) {
-								try {
-									battleView.physicalAttack();
-									battle.attack(new PhysicalAttack());
-								} catch (NotEnoughKiException e1) {
-								}
-
-							} else if (((JButton) e.getSource()).getName().equals("supAttack")) {
-								String x = battleView.showSuper();
-								Attack att = (Attack) getsuper(x,
-										game.getPlayer().getActiveFighter().getSuperAttacks());
-								try {
-									if (att != null) {
-										battle.attack(att);
-									} else {
-										JOptionPane.showMessageDialog(null,
-												"You didn't assign any super attacks to this fighter!");
-									}
-								} catch (NotEnoughKiException e1) {
-									JOptionPane.showMessageDialog(null, e1.getMessage());
-								}
-							} else if (((JButton) e.getSource()).getName().equals("ultAttack")) {
-								String x = battleView.showUltimate();
-								try {
-									Attack att = (Attack) getultimate(x,
-											game.getPlayer().getActiveFighter().getUltimateAttacks());
-									if (att != null) {
-										battle.attack(att);
-									} else {
-										JOptionPane.showMessageDialog(null,
-												"You didn't assign any ultimate attacks to this fighter!");
-									}
-
-								} catch (NotEnoughKiException e1) {
-									JOptionPane.showMessageDialog(null, e1.getMessage());
-								}
-							} else if (((JButton) e.getSource()).getName().equals("ok")) {
-
-								PlayableFighter active = game.getPlayer().getActiveFighter();
-								try {
-									String nName = (String) assignAttackView.getNewSupers().getSelectedItem();
-									if (nName != null) {
-										String oName = (String) assignAttackView.getOldSupers().getSelectedItem();
-
-										SuperAttack nAttack = (SuperAttack) getsuper(nName,
-												game.getPlayer().getSuperAttacks());
-										SuperAttack oAttack = (SuperAttack) getsuper(oName, active.getSuperAttacks());
-
-										game.getPlayer().assignAttack(active, nAttack, oAttack);
-										assignAttackView.update();
-										JOptionPane.showMessageDialog(null,
-												"You assigned a new super attack: " + nName);
-									}
-
-								} catch (MaximumAttacksLearnedException e1) {
-									JOptionPane.showMessageDialog(null, e1.getMessage());
-								} catch (DuplicateAttackException e1) {
-									JOptionPane.showMessageDialog(null, e1.getMessage());
+							} catch (NotEnoughKiException e1) {
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							}
+						} else if (((JButton) e.getSource()).getName().equals("ultAttack")) {
+							String x = battleView.showUltimate();
+							try {
+								Attack att = (Attack) getultimate(x,
+										game.getPlayer().getActiveFighter().getUltimateAttacks());
+								if (att != null) {
+									battle.attack(att);
+								} else {
+									JOptionPane.showMessageDialog(null,
+											"You didn't assign any ultimate attacks to this fighter!");
 								}
 
-								try {
+							} catch (NotEnoughKiException e1) {
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							}
+						} else if (((JButton) e.getSource()).getName().equals("ok")) {
 
-									String nName = (String) assignAttackView.getNewUltimates().getSelectedItem();
-									if (nName != null) {
-										String oName = (String) assignAttackView.getOldUltimates().getSelectedItem();
-										UltimateAttack nAttack = (UltimateAttack) getultimate(nName,
-												game.getPlayer().getUltimateAttacks());
+							PlayableFighter active = game.getPlayer().getActiveFighter();
+							try {
+								String nName = (String) upgradeView.getNewSupersBox().getSelectedItem();
+								if (nName != null) {
+									String oName = (String) upgradeView.getOldSupersBox().getSelectedItem();
 
-										UltimateAttack oAttack = (UltimateAttack) getultimate(oName,
-												active.getUltimateAttacks());
+									SuperAttack nAttack = (SuperAttack) getsuper(nName,
+											game.getPlayer().getSuperAttacks());
+									SuperAttack oAttack = (SuperAttack) getsuper(oName, active.getSuperAttacks());
 
-										game.getPlayer().assignAttack(active, nAttack, oAttack);
-										assignAttackView.update();
-										JOptionPane.showMessageDialog(null,
-												"You assigned a new ultimate attack: " + nName);
-									}
-								} catch (MaximumAttacksLearnedException e1) {
-									JOptionPane.showMessageDialog(null, e1.getMessage());
-								} catch (DuplicateAttackException e1) {
-									JOptionPane.showMessageDialog(null, e1.getMessage());
-								} catch (NotASaiyanException e1) {
-									JOptionPane.showMessageDialog(null, e1.getMessage());
+									game.getPlayer().assignAttack(active, nAttack, oAttack);
+									upgradeView.update();
+									JOptionPane.showMessageDialog(null, "You assigned a new super attack: " + nName);
 								}
+
+							} catch (MaximumAttacksLearnedException e1) {
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							} catch (DuplicateAttackException e1) {
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							}
+
+							try {
+
+								String nName = (String) upgradeView.getNewUltimatesBox().getSelectedItem();
+								if (nName != null) {
+									String oName = (String) upgradeView.getOldUltimatesBox().getSelectedItem();
+									UltimateAttack nAttack = (UltimateAttack) getultimate(nName,
+											game.getPlayer().getUltimateAttacks());
+
+									UltimateAttack oAttack = (UltimateAttack) getultimate(oName,
+											active.getUltimateAttacks());
+
+									game.getPlayer().assignAttack(active, nAttack, oAttack);
+									upgradeView.update();
+									JOptionPane.showMessageDialog(null, "You assigned a new ultimate attack: " + nName);
+								}
+							} catch (MaximumAttacksLearnedException e1) {
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							} catch (DuplicateAttackException e1) {
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							} catch (NotASaiyanException e1) {
+								JOptionPane.showMessageDialog(null, e1.getMessage());
 							}
 						}
 					}

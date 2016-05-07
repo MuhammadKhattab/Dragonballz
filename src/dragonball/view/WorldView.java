@@ -59,7 +59,6 @@ public class WorldView extends JFrame {
 	private ArrayList<JButton> cellz;
 
 	private JButton switchFighter;
-	private JButton assignAttacks;
 	private JButton upgrade;
 	private JButton newFighter;
 	private JButton save;
@@ -79,6 +78,7 @@ public class WorldView extends JFrame {
 
 		save = new JButton("Save");
 		save.setName("save");
+		save.setForeground(new Color(255, 255, 204));
 		save.setBackground(new Color(255, 121, 77));
 		save.setIcon(icon);
 
@@ -87,20 +87,17 @@ public class WorldView extends JFrame {
 		switchFighter = new JButton("Switch Fighter");
 		switchFighter.setName("switch");
 		switchFighter.setBackground(new Color(255, 121, 77));
+		switchFighter.setForeground(new Color(255, 255, 204));
 		switchFighter.setToolTipText("Hey! Wait!");
 		switchFighter.setIcon(icon);
 
 		icon = resizeIcon("assign.png", 50, 50);
 
-		assignAttacks = new JButton("Assign Attack");
-		assignAttacks.setName("assign");
-		assignAttacks.setBackground(new Color(255, 148, 77));
-		assignAttacks.setIcon(icon);
-
 		icon = resizeIcon("upgrade.png", 50, 50);
 
 		upgrade = new JButton("Upgrade Fighter");
 		upgrade.setName("upgrade");
+		upgrade.setForeground(new Color(255, 255, 204));
 		upgrade.setBackground(new Color(255, 121, 77));
 		upgrade.setIcon(icon);
 
@@ -108,7 +105,8 @@ public class WorldView extends JFrame {
 
 		newFighter = new JButton("New Fighter");
 		newFighter.setName("new");
-		newFighter.setBackground(new Color(255, 148, 77));
+		newFighter.setBackground(new Color(255, 121, 77));
+		newFighter.setForeground(new Color(255, 255, 204));
 		newFighter.setToolTipText("New Friends!");
 		newFighter.setIcon(icon);
 
@@ -240,10 +238,9 @@ public class WorldView extends JFrame {
 		cellz.get(0).setBackground(new Color(255, 204, 102));
 		cellz.get(0).setIcon(icon);
 
-		JPanel footer = new JPanel((new GridLayout(0, 5)));
+		JPanel footer = new JPanel((new GridLayout(0, 4)));
 		footer.setBackground(new Color(255, 204, 102));
 		footer.add(switchFighter);
-		footer.add(assignAttacks);
 		footer.add(upgrade);
 		footer.add(newFighter);
 		footer.add(save);
@@ -270,8 +267,8 @@ public class WorldView extends JFrame {
 		setVisible(true);
 	}
 
-	public static ImageIcon resizeIcon(String file, int width, int height) {
-		ImageIcon icon = new ImageIcon("resources/images/" + file);
+	public static ImageIcon resizeIcon(String fileName, int width, int height) {
+		ImageIcon icon = new ImageIcon("resources/images/" + fileName);
 		Image image = icon.getImage();
 		Image nimage = image.getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH);
 		icon = new ImageIcon(nimage);
@@ -309,16 +306,14 @@ public class WorldView extends JFrame {
 	}
 
 	public String boss() {
-		int n = (new Random().nextInt(5));
+		int n = (new Random().nextInt(4));
 		if (n == 0)
 			return "The Red Ribbon Army";
 		if (n == 1)
 			return "Ginyu Special Corps";
 		if (n == 2)
 			return "Garlic Jr.";
-		if (n == 3)
-			return "Coolers Armored Squadron";
-		return "Unknown";
+		return "Coolers Armored Squadron";
 	}
 
 	public String race() {
@@ -362,10 +357,6 @@ public class WorldView extends JFrame {
 
 	public JButton getSwitchFighter() {
 		return switchFighter;
-	}
-
-	public JButton getAssignAttacks() {
-		return assignAttacks;
 	}
 
 	public JButton getUpgrade() {
@@ -418,15 +409,15 @@ public class WorldView extends JFrame {
 	public String cRace() {
 		PlayableFighter fi = player.getActiveFighter();
 		if (fi instanceof Majin)
-			return "Maj";
+			return "Majin something";
 		if (fi instanceof Frieza)
-			return "Freezer";
+			return "Frieza something";
 		if (fi instanceof Saiyan)
 			return "Goku Sleeping";
 		if (fi instanceof Earthling)
 			return "Krillin staring";
 		if (fi instanceof Namekian)
-			return "Namekian";
+			return "Namekian something";
 		return "";
 
 	}
