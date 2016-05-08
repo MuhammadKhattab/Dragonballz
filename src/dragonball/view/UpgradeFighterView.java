@@ -17,6 +17,8 @@ public class UpgradeFighterView extends JFrame {
 	private JPanel upper;
 	private JPanel assignment;
 	private JPanel buttons;
+	private JPanel right;
+	private JPanel left;
 
 	private JLabel maxHealthPoints;
 	private JLabel physicalDamage;
@@ -24,6 +26,7 @@ public class UpgradeFighterView extends JFrame {
 	private JLabel maxKi;
 	private JLabel maxStamina;
 	private JLabel abilityPoints;
+	private JLabel fighterIcon;
 
 	private JButton maxHP;
 	private JButton phyDamage;
@@ -85,7 +88,8 @@ public class UpgradeFighterView extends JFrame {
 
 		blDamage = new JButton(icon);
 		blDamage.setName("blast");
-		blDamage.setBackground(new Color(179, 218, 255));;
+		blDamage.setBackground(new Color(179, 218, 255));
+		;
 
 		icon = WorldView.resizeIcon("ki.png", 50, 50);
 
@@ -94,7 +98,8 @@ public class UpgradeFighterView extends JFrame {
 
 		mKi = new JButton(icon);
 		mKi.setName("ki");
-		mKi.setBackground(new Color(179, 218, 255));;
+		mKi.setBackground(new Color(179, 218, 255));
+		;
 
 		icon = WorldView.resizeIcon("stamina.png", 50, 50);
 
@@ -103,7 +108,8 @@ public class UpgradeFighterView extends JFrame {
 
 		mStamina = new JButton(icon);
 		mStamina.setName("stamina");
-		mStamina.setBackground(new Color(179, 218, 255));;
+		mStamina.setBackground(new Color(179, 218, 255));
+		;
 
 		icon = WorldView.resizeIcon("ability points.png", 50, 50);
 
@@ -116,7 +122,7 @@ public class UpgradeFighterView extends JFrame {
 		back.setName("back");
 		back.setBackground(new Color(179, 218, 255));
 
-		upper = new JPanel(new GridLayout(2, 3));
+		upper = new JPanel(new GridLayout(0, 1));
 
 		upper.add(maxHealthPoints);
 		upper.add(physicalDamage);
@@ -127,8 +133,29 @@ public class UpgradeFighterView extends JFrame {
 
 		upper.setBackground(new Color(179, 179, 204));
 
-		buttons = new JPanel(new GridLayout(2, 3));
 
+
+		setAssignPart();
+
+		assignment = new JPanel(new GridLayout(0, 2));
+		assignment.setBackground(new Color(198, 216, 236));
+
+		assignment.add(oldSupersLabel);
+		assignment.add(oldSupersBox);
+
+		assignment.add(newSupersLabel);
+		assignment.add(newSupersBox);
+		
+		assignment.add(oldUltimatesLabel);
+		assignment.add(oldUltimatesBox);
+		
+		assignment.add(newUltimatesLabel);
+		assignment.add(newUltimatesBox);
+
+		buttons = new JPanel(new GridLayout(0, 1));
+		buttons.setBackground(new Color(184, 184, 148));
+
+		buttons.add(ok);
 		buttons.add(maxHP);
 		buttons.add(phyDamage);
 		buttons.add(blDamage);
@@ -136,28 +163,17 @@ public class UpgradeFighterView extends JFrame {
 		buttons.add(mStamina);
 		buttons.add(back);
 
-		buttons.setBackground(new Color(184, 184, 148));
+		setLayout(new GridLayout());
 
-		setAssignPart();
+		right = new JPanel(new BorderLayout());
+		right.add(buttons, BorderLayout.SOUTH);
+		right.add(assignment, BorderLayout.CENTER);
 
-		assignment = new JPanel(new GridLayout(0, 4));
-		assignment.setBackground(new Color(198, 216, 236));
+		left = new JPanel(new BorderLayout());
+		left.add(upper, BorderLayout.CENTER);
 
-		assignment.add(oldSupersLabel);
-		assignment.add(newSupersLabel);
-		assignment.add(oldUltimatesLabel);
-		assignment.add(newUltimatesLabel);
-		assignment.add(oldSupersBox);
-		assignment.add(newSupersBox);
-		assignment.add(oldUltimatesBox);
-		assignment.add(newUltimatesBox);
-		assignment.add(ok);
-
-		setLayout(new GridLayout(3, 0));
-
-		add(upper, BorderLayout.NORTH);
-		add(buttons, BorderLayout.CENTER);
-		add(assignment, BorderLayout.SOUTH);
+		add(left, BorderLayout.WEST);
+		add(right, BorderLayout.EAST);
 
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowDestroyer());

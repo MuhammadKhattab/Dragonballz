@@ -337,8 +337,8 @@ public class Game implements Serializable, PlayerListener, WorldListener, Battle
 				int oldXP = meh.getXp();
 				meh.setXp(oldXP + fo.getLevel() * 5);
 
-				ArrayList<SuperAttack> fozsu = fo.getSuperAttacks();
 				gainedSkills = "Learned Super Attacks:\n";
+				ArrayList<SuperAttack> fozsu = fo.getSuperAttacks();
 
 				for (SuperAttack x : fozsu)
 					if (!(player.getSuperAttacks().contains(x))) {
@@ -347,17 +347,13 @@ public class Game implements Serializable, PlayerListener, WorldListener, Battle
 					}
 
 				gainedSkills += "Learned Ultimate Attacks:\n";
-
 				ArrayList<UltimateAttack> fozult = fo.getUltimateAttacks();
+
 				for (UltimateAttack x : fozult)
 					if (!(player.getUltimateAttacks().contains(x))) {
 						player.getUltimateAttacks().add(x);
 						gainedSkills += String.format(" + %s\n", x.getName());
 					}
-
-				for (SuperAttack sax : player.getSuperAttacks())
-					System.out.println(sax.getName());
-				System.out.println("---");
 
 				if (fo.isStrong()) {
 					player.setExploredMaps(player.getExploredMaps() + 1);

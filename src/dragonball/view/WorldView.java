@@ -156,7 +156,7 @@ public class WorldView extends JFrame {
 		race = new JLabel("Race: " + race());
 		race.setIcon(icon);
 
-		icon = resizeIcon(String.format("%s.png", cRace()), width(), height());
+		icon = resizeIcon(String.format("%s.png", charRace()), width(), height());
 
 		fighterIcon = new JLabel(icon);
 
@@ -259,12 +259,27 @@ public class WorldView extends JFrame {
 		int index = row * 10 + col;
 		JButton button = cellz.get(index);
 
-		icon = resizeIcon("goku flying.png", 60, 60);
+		icon = resizeIcon(movRace(), 60, 60);
 
 		button.setIcon(icon);
 
 		validate();
 		setVisible(true);
+	}
+
+	public String movRace() {
+		PlayableFighter fi = player.getActiveFighter();
+		if (fi instanceof Majin)
+			return "goku flying.png";
+		if (fi instanceof Frieza)
+			return "goku flying.png";
+		if (fi instanceof Saiyan)
+			return "goku flying.png";
+		if (fi instanceof Earthling)
+			return "goku flying.png";
+		if (fi instanceof Namekian)
+			return "goku flying.png";
+		return "";
 	}
 
 	public static ImageIcon resizeIcon(String fileName, int width, int height) {
@@ -376,7 +391,7 @@ public class WorldView extends JFrame {
 		PlayableFighter fi = player.getActiveFighter();
 		senzu.setText("Senzu Beans: " + player.getSenzuBeans());
 		dragonBalls.setText("Dragon Balls: " + player.getDragonBalls());
-		level.setText("Active Fighter Level: " + fi.getLevel());
+		level.setText("Fighter Level: " + fi.getLevel());
 		fighterName.setText("Fighter Name: " + fi.getName());
 		abilityPoints.setText("Ability Points: " + fi.getAbilityPoints());
 		exp.setText("EXP: " + fi.getXp() + "/" + fi.getTargetXp());
@@ -388,7 +403,7 @@ public class WorldView extends JFrame {
 		int index = row * 10 + col;
 		JButton button = getCellz().get(index);
 
-		ImageIcon icon = resizeIcon("goku flying.png", 60, 60);
+		ImageIcon icon = resizeIcon(movRace(), 60, 60);
 		button.setIcon(icon);
 
 		repaint();
@@ -401,12 +416,12 @@ public class WorldView extends JFrame {
 
 		race.setIcon(icon);
 
-		icon = resizeIcon(String.format("%s.png", cRace()), width(), height());
+		icon = resizeIcon(String.format("%s.png", charRace()), width(), height());
 
 		fighterIcon.setIcon(icon);
 	}
 
-	public String cRace() {
+	public String charRace() {
 		PlayableFighter fi = player.getActiveFighter();
 		if (fi instanceof Majin)
 			return "Majin something";

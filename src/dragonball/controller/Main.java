@@ -85,7 +85,7 @@ public class Main extends JFrame implements MouseListener {
 			p.createFighter(race.charAt(0), name);
 		else {
 			p.createFighter('M', name);
-			JOptionPane.showMessageDialog(null, "Cancel? No...\n You have to play...");
+			JOptionPane.showMessageDialog(null, "Cancel? No...\nYou have to play...");
 		}
 		controller = new Controller(game);
 	}

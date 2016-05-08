@@ -308,7 +308,6 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 
 							PlayableFighter active = game.getPlayer().getActiveFighter();
 							try {
-								System.out.println(upgradeView.getNewSupersBox() == null);
 								String nName = (String) upgradeView.getNewSupersBox().getSelectedItem();
 								if (nName != null) {
 									String oName = (String) upgradeView.getOldSupersBox().getSelectedItem();

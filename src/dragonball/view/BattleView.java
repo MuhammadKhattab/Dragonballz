@@ -63,7 +63,7 @@ public class BattleView extends JFrame {
 		this.battle = battle;
 		prevLevel = ((PlayableFighter) battle.getMe()).getLevel();
 
-		ImageIcon icon = new ImageIcon(String.format("resources/images/%s idle.png", race()));
+		ImageIcon icon = new ImageIcon(String.format("resources/images/%s idle.gif", race()));
 
 		fighterIcon = new JLabel(icon);
 		fighterIcon.setBackground(new Color(159, 190, 223));
@@ -80,35 +80,35 @@ public class BattleView extends JFrame {
 		icon = WorldView.resizeIcon("name.png", 50, 50);
 		fighterName = new JLabel("Fighter name: " + ((Fighter) battle.getMe()).getName());
 		fighterName.setIcon(icon);
-		
+
 		foeName = new JLabel("Foe name: " + ((Fighter) battle.getFoe()).getName());
 		foeName.setIcon(icon);
-		
+
 		icon = WorldView.resizeIcon("level.png", 50, 50);
 		fighterLevel = new JLabel("Fighter level: " + ((Fighter) battle.getMe()).getLevel());
 		fighterLevel.setIcon(icon);
-		
+
 		foeLevel = new JLabel("Foe level: " + ((Fighter) battle.getFoe()).getLevel());
 		foeLevel.setIcon(icon);
-		
+
 		icon = WorldView.resizeIcon("ki.png", 50, 50);
 		fighterKi = new JLabel(
 				"Fighter ki: " + ((Fighter) battle.getMe()).getKi() + "/" + ((Fighter) battle.getMe()).getMaxKi());
 		fighterKi.setIcon(icon);
-		
+
 		foeKi = new JLabel(
 				"Foe ki: " + ((Fighter) battle.getFoe()).getKi() + "/" + ((Fighter) battle.getFoe()).getMaxKi());
 		foeKi.setIcon(icon);
-		
+
 		icon = WorldView.resizeIcon("stamina.png", 50, 50);
 		fighterStamina = new JLabel("Fighter stamina: " + ((Fighter) battle.getMe()).getStamina() + "/"
 				+ ((Fighter) battle.getMe()).getMaxStamina());
 		fighterStamina.setIcon(icon);
-	
+
 		foeStamina = new JLabel("Foe stamina: " + ((Fighter) battle.getFoe()).getStamina() + "/"
 				+ ((Fighter) battle.getMe()).getMaxStamina());
 		foeStamina.setIcon(icon);
-		
+
 		icon = WorldView.resizeIcon("hpb.png", 50, 50);
 		fighterHealth = new JLabel("Fighter health: " + ((Fighter) battle.getMe()).getHealthPoints() + "/"
 				+ ((Fighter) battle.getMe()).getMaxHealthPoints());
@@ -117,14 +117,14 @@ public class BattleView extends JFrame {
 		foeHealth = new JLabel("Foe health: " + ((Fighter) battle.getFoe()).getHealthPoints() + "/"
 				+ ((Fighter) battle.getFoe()).getMaxHealthPoints());
 		foeHealth.setIcon(icon);
-		
+
 		icon = WorldView.resizeIcon("state.png", 50, 50);
 		fighterState = new JLabel("Fighter State: Attacker");
 		fighterState.setIcon(icon);
-		
+
 		foeState = new JLabel("Foe State: Defender");
 		foeState.setIcon(icon);
-		
+
 		fighterData = new JPanel();
 		fighterData.setLayout(new GridLayout(0, 1));
 		fighterData.setBackground(new Color(179, 217, 255));
@@ -154,9 +154,9 @@ public class BattleView extends JFrame {
 
 		if ((PlayableFighter) (battle.getMe()) instanceof Saiyan) {
 			icon = WorldView.resizeIcon("transformed.png", 50, 50);
-			transformed = new JLabel("Transformed :  No");
+			transformed = new JLabel("Super Saiyan: No");
 			transformed.setIcon(icon);
-			
+
 			fighterData.add(transformed);
 			foeData.add(new JLabel(""));
 		}
@@ -214,9 +214,9 @@ public class BattleView extends JFrame {
 		upper.add(foeData);
 
 		add(upper, BorderLayout.NORTH);
-		add(scrollPane, BorderLayout.CENTER);
+		add(scrollPane, BorderLayout.EAST);
 		add(buttons, BorderLayout.SOUTH);
-		add(foe, BorderLayout.EAST);
+		add(foe, BorderLayout.CENTER);
 		add(fighter, BorderLayout.WEST);
 
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -327,8 +327,9 @@ public class BattleView extends JFrame {
 				superSaiyan();
 			else
 				idle();
-			transformed.setText("Transformed :  " + (s ? "Yes" : "No"));
-		}
+			transformed.setText("Super Saiyan: " + (s ? "Yes" : "No"));
+		} else
+			idle();
 
 		foeKi.setText(
 				"Foe ki: " + ((Fighter) battle.getFoe()).getKi() + "/" + ((Fighter) battle.getFoe()).getMaxStamina());
@@ -345,7 +346,7 @@ public class BattleView extends JFrame {
 		new java.util.Timer().schedule(new java.util.TimerTask() {
 			@Override
 			public void run() {
-				ImageIcon icon = new ImageIcon(String.format("resources/images/%s idle.png", race()));
+				ImageIcon icon = new ImageIcon(String.format("resources/images/%s idle.gif", race()));
 				fighterIcon.setIcon(icon);
 			}
 		}, 1000);
@@ -385,7 +386,7 @@ public class BattleView extends JFrame {
 	}
 
 	public void physicalAttack() {
-		ImageIcon icon = new ImageIcon(String.format("resources/images/%s attacks.png", race()));
+		ImageIcon icon = new ImageIcon(String.format("resources/images/%s attacks.gif", race()));
 		fighterIcon.setIcon(icon);
 	}
 
@@ -393,7 +394,7 @@ public class BattleView extends JFrame {
 		new java.util.Timer().schedule(new java.util.TimerTask() {
 			@Override
 			public void run() {
-				ImageIcon icon = new ImageIcon(String.format("resources/images/%s attacks.png", foe()));
+				ImageIcon icon = new ImageIcon(String.format("resources/images/%s attacks.gif", foe()));
 				foeIcon.setIcon(icon);
 			}
 		}, 1000);
@@ -401,7 +402,7 @@ public class BattleView extends JFrame {
 	}
 
 	public void foeIdle() {
-		ImageIcon icon = new ImageIcon(String.format("resources/images/%s idle.png", foe()));
+		ImageIcon icon = new ImageIcon(String.format("resources/images/%s idle.gif", foe()));
 		foeIcon.setIcon(icon);
 	}
 
@@ -410,7 +411,7 @@ public class BattleView extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		BattleView x = new BattleView(new Battle(new Saiyan("S"), new Saiyan("d")));
+		// new BattleView(new Battle(new Saiyan("S"), new Saiyan("d")));
 	}
 
 }
