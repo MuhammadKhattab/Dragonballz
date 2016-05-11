@@ -1,23 +1,41 @@
 package dragonball.model.game;
 
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.JOptionPane;
 
-import dragonball.model.attack.*;
+import dragonball.model.attack.Attack;
+import dragonball.model.attack.MaximumCharge;
+import dragonball.model.attack.SuperAttack;
+import dragonball.model.attack.SuperSaiyan;
+import dragonball.model.attack.UltimateAttack;
 import dragonball.model.battle.Battle;
 import dragonball.model.battle.BattleEvent;
 import dragonball.model.battle.BattleEventType;
 import dragonball.model.battle.BattleListener;
 import dragonball.model.cell.Collectible;
 import dragonball.model.cell.EmptyCell;
-import dragonball.model.character.fighter.*;
-import dragonball.model.dragon.*;
+import dragonball.model.character.fighter.NonPlayableFighter;
+import dragonball.model.character.fighter.PlayableFighter;
+import dragonball.model.dragon.Dragon;
+import dragonball.model.dragon.DragonWish;
 import dragonball.model.exceptions.MissingFieldException;
 import dragonball.model.exceptions.UnknownAttackTypeException;
-import dragonball.model.player.*;
-import dragonball.model.world.*;
-import java.io.*;
+import dragonball.model.player.Player;
+import dragonball.model.player.PlayerListener;
+import dragonball.model.world.World;
+import dragonball.model.world.WorldListener;
 
 @SuppressWarnings("serial")
 public class Game implements Serializable, PlayerListener, WorldListener, BattleListener {

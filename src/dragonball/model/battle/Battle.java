@@ -1,21 +1,12 @@
 package dragonball.model.battle;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 
-import javax.swing.JOptionPane;
-
-import dragonball.model.attack.Attack;
-import dragonball.model.attack.PhysicalAttack;
-import dragonball.model.attack.SuperAttack;
-import dragonball.model.attack.UltimateAttack;
+import dragonball.model.attack.*;
 import dragonball.model.cell.Collectible;
-import dragonball.model.character.fighter.Fighter;
-import dragonball.model.character.fighter.Saiyan;
-import dragonball.model.exceptions.NotASaiyanException;
-import dragonball.model.exceptions.NotEnoughKiException;
-import dragonball.model.exceptions.NotEnoughSenzuBeansException;
+import dragonball.model.character.fighter.*;
+import dragonball.model.exceptions.*;
 import dragonball.model.player.Player;
 
 @SuppressWarnings("serial")
@@ -35,7 +26,7 @@ public class Battle implements Serializable {
 		this.attacker = me;
 
 		setTurn("");
-		
+
 		Fighter meFighter = (Fighter) me;
 		meFighter.setHealthPoints(meFighter.getMaxHealthPoints());
 		meFighter.setKi(0);

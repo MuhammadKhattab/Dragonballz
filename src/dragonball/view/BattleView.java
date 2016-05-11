@@ -125,8 +125,7 @@ public class BattleView extends JFrame {
 		foeState = new JLabel("Foe State: Defender");
 		foeState.setIcon(icon);
 
-		fighterData = new JPanel();
-		fighterData.setLayout(new GridLayout(0, 1));
+		fighterData = new JPanel(new GridLayout(0, 2));
 		fighterData.setBackground(new Color(179, 217, 255));
 		fighterData.add(fighterName);
 		fighterData.add(fighterLevel);
@@ -142,8 +141,7 @@ public class BattleView extends JFrame {
 		foe.setBackground(new Color(160, 190, 223));
 		foe.add(foeIcon, BorderLayout.CENTER);
 
-		foeData = new JPanel();
-		foeData.setLayout(new GridLayout(0, 1));
+		foeData = new JPanel(new GridLayout(0, 2));
 		foeData.setBackground(new Color(209, 179, 255));
 		foeData.add(foeName);
 		foeData.add(foeLevel);
@@ -198,8 +196,10 @@ public class BattleView extends JFrame {
 
 		comments = new JTextArea("Fight!");
 		comments.setEditable(false);
-		scrollPane = new JScrollPane(comments);
 		comments.setBackground(new Color(159, 190, 223));
+		
+		scrollPane = new JScrollPane(comments);
+		scrollPane.setPreferredSize(new Dimension(200, 200));
 
 		buttons = new JPanel();
 		buttons.add(physical);
@@ -210,6 +210,7 @@ public class BattleView extends JFrame {
 		buttons.setBackground(new Color(159, 190, 223));
 
 		upper = new JPanel(new GridLayout(0, 2));
+//		upper.setPreferredSize(new Dimension(WIDTH, 600));
 		upper.add(fighterData);
 		upper.add(foeData);
 
@@ -408,10 +409,6 @@ public class BattleView extends JFrame {
 
 	public String foe() {
 		return "foe1";
-	}
-
-	public static void main(String[] args) {
-		// new BattleView(new Battle(new Saiyan("S"), new Saiyan("d")));
 	}
 
 }

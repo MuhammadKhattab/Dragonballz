@@ -28,7 +28,6 @@ public class WorldView extends JFrame {
 
 	private Player player;
 	private World world;
-	private UpgradeFighterView upgradeFighter;
 
 	private JLabel playerName;
 	private JLabel senzu;
@@ -110,8 +109,6 @@ public class WorldView extends JFrame {
 		newFighter.setToolTipText("New Friends!");
 		newFighter.setIcon(icon);
 
-		PlayableFighter fi = player.getActiveFighter();
-
 		icon = resizeIcon("senzu beans.png", 50, 50);
 
 		senzu = new JLabel("Senzu Beans: " + player.getSenzuBeans());
@@ -119,7 +116,7 @@ public class WorldView extends JFrame {
 
 		icon = resizeIcon("ability points.png", 50, 50);
 
-		abilityPoints = new JLabel("Ability Points: " + player.getActiveFighter().getAbilityPoints());
+		abilityPoints = new JLabel("Ability Points: ");
 		abilityPoints.setIcon(icon);
 
 		icon = resizeIcon("dragon ball.png", 50, 50);
@@ -129,7 +126,7 @@ public class WorldView extends JFrame {
 
 		icon = resizeIcon("level.png", 50, 50);
 
-		level = new JLabel("Active Fighter Level: " + fi.getLevel());
+		level = new JLabel("Active Fighter Level: ");
 		level.setIcon(icon);
 
 		bossLevel = new JLabel(String.format("Boss Level: %s", world.getBoss().getLevel()));
@@ -140,7 +137,7 @@ public class WorldView extends JFrame {
 		playerName = new JLabel("Player Name: " + player.getName());
 		playerName.setIcon(icon);
 
-		fighterName = new JLabel("Fighter Name: " + fi.getName());
+		fighterName = new JLabel("Fighter Name: ");
 		fighterName.setIcon(icon);
 
 		bossName = new JLabel(String.format("Boss Name: %s", world.getBoss().getName()));
@@ -148,17 +145,12 @@ public class WorldView extends JFrame {
 
 		icon = resizeIcon("exp.png", 50, 50);
 
-		exp = new JLabel("EXP: " + fi.getXp() + "/" + fi.getTargetXp());
+		exp = new JLabel("EXP: ");
 		exp.setIcon(icon);
 
-		icon = resizeIcon(String.format("%s.png", race()), 50, 50);
+		race = new JLabel("Race: ");
 
-		race = new JLabel("Race: " + race());
-		race.setIcon(icon);
-
-		icon = resizeIcon(String.format("%s.png", charRace()), width(), height());
-
-		fighterIcon = new JLabel(icon);
+		fighterIcon = new JLabel();
 
 		icon = resizeIcon("nimbus.png", 50, 50);
 
@@ -200,8 +192,6 @@ public class WorldView extends JFrame {
 			cellzPanel.add(b);
 			cellz.add(b);
 		}
-
-		icon = resizeIcon(String.format("%s.png", race()), 50, 50);
 
 		icon = resizeIcon("hp.png", 50, 50);
 
@@ -295,7 +285,7 @@ public class WorldView extends JFrame {
 		if (fi instanceof Majin)
 			return 200;
 		if (fi instanceof Frieza)
-			return 200;
+			return 128;
 		if (fi instanceof Saiyan)
 			return 180;
 		if (fi instanceof Earthling)
@@ -348,14 +338,6 @@ public class WorldView extends JFrame {
 
 	public JButton getSave() {
 		return save;
-	}
-
-	public UpgradeFighterView getUpgradeFighter() {
-		return upgradeFighter;
-	}
-
-	public void setUpgradeFighter(UpgradeFighterView upgradeFighter) {
-		this.upgradeFighter = upgradeFighter;
 	}
 
 	public JLabel getAbilityPoints() {
@@ -424,27 +406,17 @@ public class WorldView extends JFrame {
 	public String charRace() {
 		PlayableFighter fi = player.getActiveFighter();
 		if (fi instanceof Majin)
-			return "Majin something";
+			return "Majin mock";
 		if (fi instanceof Frieza)
-			return "Frieza something";
+			return "Frieza what";
 		if (fi instanceof Saiyan)
 			return "Goku Sleeping";
 		if (fi instanceof Earthling)
 			return "Krillin staring";
 		if (fi instanceof Namekian)
-			return "Namekian something";
+			return "Namekian yuga";
 		return "";
 
-	}
-
-	public void addFihgter() {
-		String name = JOptionPane.showInputDialog("Enter the fighter name");
-		final String[] races = { "Saiyan", "Namekian", "Majin", "Earthling", "Frieza" };
-		JFrame frame = new JFrame("choose a race");
-		String race = (String) JOptionPane.showInputDialog(frame, "Choose a race", "Choose a race",
-				JOptionPane.QUESTION_MESSAGE, null, races, races[0]);
-		if (race != null && race.length() > 0)
-			player.createFighter(race.charAt(0), name);
 	}
 
 	public Player getPlayer() {

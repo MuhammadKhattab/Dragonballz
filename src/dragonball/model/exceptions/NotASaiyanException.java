@@ -4,6 +4,5 @@ package dragonball.model.exceptions;
 public class NotASaiyanException extends InvalidAssignAttackException {
 
 	public NotASaiyanException() {
-		super("You must be a Saiyan to do this!");
-	}
+		super("You have to be a Saiyan!");}
 }

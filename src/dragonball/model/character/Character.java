@@ -2,6 +2,7 @@ package dragonball.model.character;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public abstract class Character implements Serializable{
 	private String name;
 	

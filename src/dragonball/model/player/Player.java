@@ -5,7 +5,6 @@ import java.util.*;
 import dragonball.model.attack.*;
 import dragonball.model.character.fighter.*;
 import dragonball.model.dragon.DragonWish;
-import dragonball.model.dragon.DragonWishType;
 import dragonball.model.exceptions.DuplicateAttackException;
 import dragonball.model.exceptions.MaximumAttacksLearnedException;
 import dragonball.model.exceptions.NotASaiyanException;
@@ -235,11 +234,7 @@ public class Player implements Serializable {
 
 	public void assignAttack(PlayableFighter fighter, UltimateAttack newAttack, UltimateAttack oldAttack)
 			throws DuplicateAttackException, NotASaiyanException, MaximumAttacksLearnedException {
-		
-		System.out.println("HERE we check");
-		System.out.println(newAttack);
-		if(oldAttack != null)
-		System.out.println(oldAttack.getName());
+
 		if (fighter.getUltimateAttacks().contains(newAttack))
 			throw new DuplicateAttackException(newAttack);
 		else {

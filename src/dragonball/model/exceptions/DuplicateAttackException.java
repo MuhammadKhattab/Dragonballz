@@ -8,7 +8,7 @@ public class DuplicateAttackException extends InvalidAssignAttackException {
 	private Attack attack;
 
 	public DuplicateAttackException(Attack attack) {
-		super("this attack: "+ attack.getName()+ " is a duplicate!");
+		super(attack.getName()+ " is already assigned to this fighter!");
 		this.attack = attack;
 	}
 

@@ -27,17 +27,26 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 	private BattleView battleView;
 	private DragonView dragonView;
 	private UpgradeFighterView upgradeView;
+	private NewFighterView newFighterView;
 
 	public Controller(Game game) {
 		this.game = game;
 		game.setListener(this);
 
-		System.out.println(game.getWorld());
+		newFighterView = new NewFighterView();
+
+		addNFVListeners();
 
 		check = "";
+	}
 
-		worldView = new WorldView(game.getWorld(), game.getPlayer());
-		addButtonsListeners();
+	public void addNFVListeners() {
+		newFighterView.getCearthling().addMouseListener(this);
+		newFighterView.getCfrieza().addMouseListener(this);
+		newFighterView.getCmajin().addMouseListener(this);
+		newFighterView.getCnamekian().addMouseListener(this);
+		newFighterView.getCsaiyan().addMouseListener(this);
+		newFighterView.getCreate().addMouseListener(this);
 	}
 
 	public void addButtonsListeners() {
@@ -46,7 +55,6 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 			x.addKeyListener(this);
 		worldView.getSwitchFighter().addMouseListener(this);
 		worldView.getNewFighter().addMouseListener(this);
-		worldView.update();
 		worldView.getUpgrade().addMouseListener(this);
 		worldView.getSave().addMouseListener(this);
 	}
@@ -81,7 +89,6 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 			JButton button = worldView.getCellz().get(index);
 			button.setIcon(null);
 
-			worldView.setVisible(false);
 			battle = ((Battle) e.getSource());
 			battleView = new BattleView(battle);
 			battleView.getBlock().addMouseListener(this);
@@ -89,6 +96,7 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 			battleView.getPhysical().addMouseListener(this);
 			battleView.getZuper().addMouseListener(this);
 			battleView.getUltimate().addMouseListener(this);
+			worldView.setVisible(false);
 		} else {
 			if (e.getType() == BattleEventType.NEW_TURN) {
 				battleView.update();
@@ -147,9 +155,10 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 						JOptionPane.showMessageDialog(null, "You lose!");
 						worldView = new WorldView(game.getWorld(), game.getPlayer());
 						addButtonsListeners();
+						worldView.updateRace();
 						// }
 					}
-					battleView.setVisible(false);
+					battleView.dispose();
 					worldView.update();
 				}
 			}
@@ -206,11 +215,11 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 					}
 				} else {
 					if (((JButton) e.getSource()).getName().equals("new")) {
-						worldView.addFihgter();
+						newFighterView.setVisible(true);
+						worldView.setVisible(false);
 					} else {
 						if (((JButton) e.getSource()).getName().equals("upgrade")) {
 							upgradeView = new UpgradeFighterView(game.getPlayer());
-							worldView.setUpgradeFighter(upgradeView);
 							upgradeView.getBack().addMouseListener(this);
 							upgradeView.getbDamage().addMouseListener(this);
 							upgradeView.getpDamage().addMouseListener(this);
@@ -226,8 +235,8 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 
 							worldView.setVisible(false);
 						} else if (((JButton) e.getSource()).getName().equals("back")) {
-							worldView.getUpgradeFighter().setVisible(false);
 							worldView.setVisible(true);
+							upgradeView.dispose();
 							worldView.update();
 						} else if (((JButton) e.getSource()).getName().equals("hp")) {
 							upgrade('H');
@@ -349,15 +358,39 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 							} catch (NotASaiyanException e1) {
 								JOptionPane.showMessageDialog(null, e1.getMessage());
 							}
+						} else {
+							if (((JButton) e.getSource()).getName().equals("create")) {
+								if (worldView == null) {
+									worldView = new WorldView(game.getWorld(), game.getPlayer());
+									addButtonsListeners();
+								}
+								game.getPlayer().createFighter(newFighterView.getChosenRace().charAt(0),
+										newFighterView.getFighterName());
+								worldView.setVisible(true);
+								newFighterView.setVisible(false);
+								worldView.update();
+								worldView.updateRace();
+							} else if (((JButton) e.getSource()).getName().equals("saiyan choose")) {
+								newFighterView.update("Saiyan");
+							} else if (((JButton) e.getSource()).getName().equals("namekian choose")) {
+								newFighterView.update("Namekian");
+							} else if (((JButton) e.getSource()).getName().equals("frieza choose")) {
+								newFighterView.update("Frieza");
+							} else if (((JButton) e.getSource()).getName().equals("majin choose")) {
+								newFighterView.update("Majin");
+							} else if (((JButton) e.getSource()).getName().equals("earthling choose"))
+								newFighterView.update("Earthling");
+
 						}
 					}
 				}
+
 			}
 		}
 	}
 
 	private void exitDragonView() {
-		dragonView.setVisible(false);
+		dragonView.dispose();
 		worldView.setVisible(true);
 		worldView.update();
 
@@ -383,7 +416,7 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 		} catch (NotEnoughAbilityPointsException e1) {
 			JOptionPane.showMessageDialog(null, e1.getMessage());
 		}
-		worldView.getUpgradeFighter().update();
+		upgradeView.update();
 	}
 
 	@Override

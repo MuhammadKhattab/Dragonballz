@@ -4,6 +4,6 @@ package dragonball.model.exceptions;
 public class NotEnoughSenzuBeansException extends NotEnoughResourcesException{
 
 	public NotEnoughSenzuBeansException() {
-		super("You have no senzuz ma dear");
+		super("You have 0 senzu beans!");
 	}
 }

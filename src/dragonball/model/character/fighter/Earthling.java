@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import dragonball.model.attack.SuperAttack;
 import dragonball.model.attack.UltimateAttack;
 
+@SuppressWarnings("serial")
 public class Earthling extends PlayableFighter {
 
 	public Earthling(String name, int level, int xp, int targetXp, int maxHealthPoints, int blastDamage,

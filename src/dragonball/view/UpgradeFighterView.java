@@ -4,8 +4,7 @@ import java.awt.*;
 
 import javax.swing.*;
 
-import dragonball.model.attack.SuperAttack;
-import dragonball.model.attack.UltimateAttack;
+import dragonball.model.attack.*;
 import dragonball.model.character.fighter.PlayableFighter;
 import dragonball.model.player.Player;
 
@@ -26,7 +25,8 @@ public class UpgradeFighterView extends JFrame {
 	private JLabel maxKi;
 	private JLabel maxStamina;
 	private JLabel abilityPoints;
-	private JLabel fighterIcon;
+	// TODO
+	// private JLabel fighterIcon;
 
 	private JButton maxHP;
 	private JButton phyDamage;
@@ -133,8 +133,6 @@ public class UpgradeFighterView extends JFrame {
 
 		upper.setBackground(new Color(179, 179, 204));
 
-
-
 		setAssignPart();
 
 		assignment = new JPanel(new GridLayout(0, 2));
@@ -145,10 +143,10 @@ public class UpgradeFighterView extends JFrame {
 
 		assignment.add(newSupersLabel);
 		assignment.add(newSupersBox);
-		
+
 		assignment.add(oldUltimatesLabel);
 		assignment.add(oldUltimatesBox);
-		
+
 		assignment.add(newUltimatesLabel);
 		assignment.add(newUltimatesBox);
 

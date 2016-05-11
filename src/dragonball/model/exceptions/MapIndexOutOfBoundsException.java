@@ -6,7 +6,7 @@ public class MapIndexOutOfBoundsException extends IndexOutOfBoundsException {
 	private int column;
 
 	public MapIndexOutOfBoundsException(int row, int column) {
-		super("can't move to row: "+row+ "column: "+column+"");
+		super("Row: "+row+ "Column: "+column+"");
 		this.row = row;
 		this.column = column;
 	}

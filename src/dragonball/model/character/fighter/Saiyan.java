@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import dragonball.model.attack.SuperAttack;
 import dragonball.model.attack.UltimateAttack;
 
+@SuppressWarnings("serial")
 public class Saiyan extends PlayableFighter {
 
 	private boolean transformed;

@@ -2,6 +2,7 @@ package dragonball.model.cell;
 
 import dragonball.model.character.fighter.*;
 
+@SuppressWarnings("serial")
 public class FoeCell extends Cell {
 
 	private NonPlayableFighter foe;

@@ -3,7 +3,6 @@ package dragonball.model.attack;
 import dragonball.model.battle.BattleOpponent;
 import dragonball.model.character.fighter.Fighter;
 import dragonball.model.character.fighter.Saiyan;
-import dragonball.model.exceptions.NotASaiyanException;
 import dragonball.model.exceptions.NotEnoughKiException;
 
 @SuppressWarnings("serial")

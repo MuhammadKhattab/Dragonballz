@@ -6,6 +6,7 @@ import dragonball.model.character.Character;
 import dragonball.model.battle.*;
 import dragonball.model.attack.*;
 
+@SuppressWarnings("serial")
 public abstract class Fighter extends Character implements BattleOpponent, Serializable {
 	private int level;
 	private int blastDamage;

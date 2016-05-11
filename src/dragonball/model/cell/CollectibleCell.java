@@ -1,5 +1,6 @@
 package dragonball.model.cell;
 
+@SuppressWarnings("serial")
 public class CollectibleCell extends Cell {
 
 	private Collectible collectible;

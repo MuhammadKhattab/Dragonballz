@@ -4,6 +4,7 @@ import java.util.*;
 import dragonball.model.attack.*;
 import dragonball.model.character.PlayableCharacter;
 
+@SuppressWarnings("serial")
 public abstract class PlayableFighter extends Fighter implements PlayableCharacter {
 	public static final int INITIAL_LEVEL = 1;
 	public static final int INITIAL_XP = 0;

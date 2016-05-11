@@ -75,18 +75,7 @@ public class Main extends JFrame implements MouseListener {
 
 		Player p = game.getPlayer();
 		p.setName(JOptionPane.showInputDialog("Enter the player name"));
-		String name = JOptionPane.showInputDialog("Enter the fighter name");
 
-		final String[] races = { "Saiyan", "Namekian", "Majin", "Earthling", "Frieza" };
-		JFrame frame = new JFrame("choose a race");
-		String race = (String) JOptionPane.showInputDialog(frame, "Choose a race", "Choose a race",
-				JOptionPane.QUESTION_MESSAGE, null, races, races[0]);
-		if (race != null && race.length() > 0)
-			p.createFighter(race.charAt(0), name);
-		else {
-			p.createFighter('M', name);
-			JOptionPane.showMessageDialog(null, "Cancel? No...\nYou have to play...");
-		}
 		controller = new Controller(game);
 	}
 
@@ -142,25 +131,28 @@ public class Main extends JFrame implements MouseListener {
 	public void cheat(String input) throws IOException, Exception {
 		if (input != null) {
 			input = input.toUpperCase();
-			if (input.equals("FABULOUS")) {
+			if (input.equals("OVER9000")) {
 				startGame();
-				setVisible(false);
+				dispose();
 				Player p = controller.getGame().getPlayer();
-				PlayableFighter f = p.getActiveFighter();
-				p.setSenzuBeans(9000);
-				p.setDragonBalls(9000);
-				f.setAbilityPoints(9000);
-				
-				f.setMaxHealthPoints(150);
-				
+				p.createFighter('S', "Goku");
+
+				for (PlayableFighter f : p.getFighters()) {
+					if (f.getName().equals("Goku")) {
+						p.setDragonBalls(9000);
+						f.setAbilityPoints(9000);
+						f.setMaxHealthPoints(9);
+					}
+				}
+
 				ArrayList<UltimateAttack> x = new ArrayList<>();
 				x.add(new SuperSaiyan());
 				p.setUltimateAttacks(x);
-				
+
 				ArrayList<SuperAttack> y = new ArrayList<>();
 				y.add(new MaximumCharge());
 				p.setSuperAttacks(y);
-				
+
 				controller.getWorldView().update();
 			} else
 				JOptionPane.showMessageDialog(null, "No, that's wrong!");
@@ -195,10 +187,11 @@ public class Main extends JFrame implements MouseListener {
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		new Main();
-//		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("data/all saved files.csv")));
-//		ArrayList<String> x = new ArrayList<String>();
-//		oos.writeObject(x);
-//		oos.close();
+		// ObjectOutputStream oos = new ObjectOutputStream(new
+		// FileOutputStream(new File("data/all saved files.csv")));
+		// ArrayList<String> x = new ArrayList<String>();
+		// oos.writeObject(x);
+		// oos.close();
 	}
 
 }

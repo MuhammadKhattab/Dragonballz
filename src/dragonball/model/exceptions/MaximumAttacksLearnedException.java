@@ -4,6 +4,6 @@ package dragonball.model.exceptions;
 public class MaximumAttacksLearnedException extends InvalidAssignAttackException {
 
 	public MaximumAttacksLearnedException() {
-		super("You can't learn more!");
+		super("You can't assign more attacks...\nbut you can replace old attacks with new ones!");
 	}
 }
