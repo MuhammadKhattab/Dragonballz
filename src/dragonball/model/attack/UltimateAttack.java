@@ -16,13 +16,16 @@ public class UltimateAttack extends Attack {
 		return getDamage() + ((Fighter) attacker).getBlastDamage();
 	}
 
-	public void onUse(BattleOpponent attacker, BattleOpponent defender, boolean defenderBlocking) throws NotEnoughKiException {
+	public void onUse(BattleOpponent attacker, BattleOpponent defender, boolean defenderBlocking)
+			throws NotEnoughKiException {
 		Fighter attackerFighter = (Fighter) attacker;
-		if (!(attacker instanceof Saiyan && ((Saiyan) attacker).isTransformed()))
-			if (attackerFighter.getKi() >= 3)
+		if (!(attacker instanceof Saiyan && ((Saiyan) attacker).isTransformed())) {
+			if (attackerFighter.getKi() >= 3) {
 				attackerFighter.setKi(attackerFighter.getKi() - 3);
-			else
+			} else {
 				throw new NotEnoughKiException(3, attackerFighter.getKi());
+			}
+		}
 		super.onUse(attacker, defender, defenderBlocking);
 	}
 

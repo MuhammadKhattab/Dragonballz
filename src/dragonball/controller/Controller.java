@@ -40,6 +40,10 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 		check = "";
 	}
 
+	public NewFighterView getNewFighterView() {
+		return newFighterView;
+	}
+
 	public void addNFVListeners() {
 		newFighterView.getCearthling().addMouseListener(this);
 		newFighterView.getCfrieza().addMouseListener(this);
@@ -98,21 +102,42 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 			battleView.getUltimate().addMouseListener(this);
 			worldView.setVisible(false);
 		} else {
-			if (e.getType() == BattleEventType.NEW_TURN) {
+			if (e.getType() == BattleEventType.USE)
+				battleView.use();
+			else if (e.getType() == BattleEventType.ATTACK) {
+				if (e.getAttack() instanceof PhysicalAttack) {
+					if (e.getCurrentOpponent() == battle.getFoe())
+						battleView.foePhysicalAttack();
+					else
+						battleView.physicalAttack();
+				} else if (e.getAttack() instanceof SuperAttack) {
+					if (e.getCurrentOpponent() == battle.getFoe())
+						battleView.foeSuperAttack();
+					else
+						battleView.superAttack();
+				} else if (e.getAttack() instanceof UltimateAttack) {
+					if (e.getCurrentOpponent() == battle.getFoe())
+						battleView.foeUltimateAttack();
+					else
+						battleView.ultimateAttack();
+				}
+			} else if (e.getType() == BattleEventType.BLOCK)
+				if (e.getCurrentOpponent() == battle.getFoe())
+					battleView.block();
+				else
+					battleView.foeBlock();
+			else if (e.getType() == BattleEventType.NEW_TURN) {
 				battleView.update();
 				if (((Battle) e.getSource()).getAttacker() == (((Battle) e.getSource()).getFoe())) {
 					while (true) {
 						try {
 							battle.play();
-							battleView.foePhysicalAttack();
 							break;
 						} catch (Exception e1) {
 						}
 					}
 				}
-
 				battleView.update();
-
 			} else {
 				if (e.getType() == BattleEventType.ENDED) {
 					if (e.getWinner().equals(game.getPlayer().getActiveFighter())) {
@@ -139,6 +164,7 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 							JOptionPane.showMessageDialog(null,
 									"You defeated the boss?\nYou defeated the boss!!\nWhy you do this!");
 							worldView = new WorldView(game.getWorld(), game.getPlayer());
+							worldView.updateRace();
 							addButtonsListeners();
 						} else {
 							worldView.setVisible(true);
@@ -227,7 +253,8 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 							upgradeView.getmStamina().addMouseListener(this);
 							upgradeView.getMaxHP().addMouseListener(this);
 
-							upgradeView.getOk().addMouseListener(this);
+							upgradeView.getAssignSuper().addMouseListener(this);
+							upgradeView.getAssignUltimate().addMouseListener(this);
 							upgradeView.getNewSupersBox().addMouseListener(this);
 							upgradeView.getNewUltimatesBox().addMouseListener(this);
 							upgradeView.getOldSupersBox().addMouseListener(this);
@@ -278,42 +305,35 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 								JOptionPane.showMessageDialog(null, e1.getMessage());
 							}
 							battleView.update();
-						} else if (((JButton) e.getSource()).getName().equals("phyAttack")) {
+						} else if (((JButton) e.getSource()).getName().equals("attack physical")) {
 							try {
 								battleView.physicalAttack();
 								battle.attack(new PhysicalAttack());
 							} catch (NotEnoughKiException e1) {
 							}
 
-						} else if (((JButton) e.getSource()).getName().equals("supAttack")) {
+						} else if (((JButton) e.getSource()).getName().equals("attack super")) {
 							String x = battleView.showSuper();
-							Attack att = (Attack) getsuper(x, game.getPlayer().getActiveFighter().getSuperAttacks());
+							Attack att = (Attack) getChosenSuper(x,
+									game.getPlayer().getActiveFighter().getSuperAttacks());
 							try {
-								if (att != null) {
+								if (att != null)
 									battle.attack(att);
-								} else {
-									JOptionPane.showMessageDialog(null,
-											"You didn't assign any super attacks to this fighter!");
-								}
 							} catch (NotEnoughKiException e1) {
 								JOptionPane.showMessageDialog(null, e1.getMessage());
 							}
-						} else if (((JButton) e.getSource()).getName().equals("ultAttack")) {
+						} else if (((JButton) e.getSource()).getName().equals("attack ultimate")) {
 							String x = battleView.showUltimate();
 							try {
-								Attack att = (Attack) getultimate(x,
+								Attack att = (Attack) getChosenUltimate(x,
 										game.getPlayer().getActiveFighter().getUltimateAttacks());
-								if (att != null) {
+								if (att != null)
 									battle.attack(att);
-								} else {
-									JOptionPane.showMessageDialog(null,
-											"You didn't assign any ultimate attacks to this fighter!");
-								}
 
 							} catch (NotEnoughKiException e1) {
 								JOptionPane.showMessageDialog(null, e1.getMessage());
 							}
-						} else if (((JButton) e.getSource()).getName().equals("ok")) {
+						} else if (((JButton) e.getSource()).getName().equals("assign super")) {
 
 							PlayableFighter active = game.getPlayer().getActiveFighter();
 							try {
@@ -321,55 +341,55 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 								if (nName != null) {
 									String oName = (String) upgradeView.getOldSupersBox().getSelectedItem();
 
-									SuperAttack nAttack = (SuperAttack) getsuper(nName,
+									SuperAttack nAttack = (SuperAttack) getChosenSuper(nName,
 											game.getPlayer().getSuperAttacks());
-									SuperAttack oAttack = (SuperAttack) getsuper(oName, active.getSuperAttacks());
+									SuperAttack oAttack = (SuperAttack) getChosenSuper(oName, active.getSuperAttacks());
 
 									game.getPlayer().assignAttack(active, nAttack, oAttack);
 									upgradeView.update();
 									JOptionPane.showMessageDialog(null, "You assigned a new super attack: " + nName);
 								}
-
-							} catch (MaximumAttacksLearnedException e1) {
-								JOptionPane.showMessageDialog(null, e1.getMessage());
-							} catch (DuplicateAttackException e1) {
+							} catch (MaximumAttacksLearnedException | DuplicateAttackException e1) {
 								JOptionPane.showMessageDialog(null, e1.getMessage());
 							}
+						} else if (((JButton) e.getSource()).getName().equals("assign ultimate")) {
+							PlayableFighter active = game.getPlayer().getActiveFighter();
+							String nName = (String) upgradeView.getNewUltimatesBox().getSelectedItem();
+							if (nName != null) {
+								String oName = (String) upgradeView.getOldUltimatesBox().getSelectedItem();
 
-							try {
-
-								String nName = (String) upgradeView.getNewUltimatesBox().getSelectedItem();
-								if (nName != null) {
-									String oName = (String) upgradeView.getOldUltimatesBox().getSelectedItem();
-									UltimateAttack nAttack = (UltimateAttack) getultimate(nName,
+								try {
+									UltimateAttack nAttack = (UltimateAttack) getChosenUltimate(nName,
 											game.getPlayer().getUltimateAttacks());
 
-									UltimateAttack oAttack = (UltimateAttack) getultimate(oName,
+									UltimateAttack oAttack = (UltimateAttack) getChosenUltimate(oName,
 											active.getUltimateAttacks());
-
 									game.getPlayer().assignAttack(active, nAttack, oAttack);
 									upgradeView.update();
 									JOptionPane.showMessageDialog(null, "You assigned a new ultimate attack: " + nName);
+								} catch (DuplicateAttackException | NotASaiyanException
+										| MaximumAttacksLearnedException e1) {
+									JOptionPane.showMessageDialog(null, e1.getMessage());
 								}
-							} catch (MaximumAttacksLearnedException e1) {
-								JOptionPane.showMessageDialog(null, e1.getMessage());
-							} catch (DuplicateAttackException e1) {
-								JOptionPane.showMessageDialog(null, e1.getMessage());
-							} catch (NotASaiyanException e1) {
-								JOptionPane.showMessageDialog(null, e1.getMessage());
+
 							}
 						} else {
 							if (((JButton) e.getSource()).getName().equals("create")) {
 								if (worldView == null) {
 									worldView = new WorldView(game.getWorld(), game.getPlayer());
 									addButtonsListeners();
+									worldView.setVisible(false);
 								}
-								game.getPlayer().createFighter(newFighterView.getChosenRace().charAt(0),
-										newFighterView.getFighterName());
-								worldView.setVisible(true);
-								newFighterView.setVisible(false);
-								worldView.update();
-								worldView.updateRace();
+								try {
+									game.getPlayer().createFighter(newFighterView.getChosenRace().charAt(0),
+											newFighterView.getFighterName());
+									newFighterView.setVisible(false);
+									worldView.update();
+									worldView.updateRace();
+									worldView.setVisible(true);
+								} catch (Exception e1) {
+									JOptionPane.showMessageDialog(null, e1.getMessage());
+								}
 							} else if (((JButton) e.getSource()).getName().equals("saiyan choose")) {
 								newFighterView.update("Saiyan");
 							} else if (((JButton) e.getSource()).getName().equals("namekian choose")) {
@@ -387,6 +407,7 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 
 			}
 		}
+
 	}
 
 	private void exitDragonView() {
@@ -396,17 +417,19 @@ public class Controller implements GameListener, MouseListener, KeyListener, Ser
 
 	}
 
-	public SuperAttack getsuper(String x, ArrayList<SuperAttack> a) {
-		for (int i = 0; i < a.size(); i++)
-			if (x.equals(a.get(i).getName()))
-				return a.get(i);
+	public static SuperAttack getChosenSuper(String x, ArrayList<SuperAttack> a) {
+		if (x != null && x.length() > 0)
+			for (SuperAttack s : a)
+				if (s.getName().equals(x))
+					return s;
 		return null;
 	}
 
-	public UltimateAttack getultimate(String x, ArrayList<UltimateAttack> a) {
-		for (UltimateAttack u : a)
-			if (x.equals(u.getName()))
-				return u;
+	public static UltimateAttack getChosenUltimate(String x, ArrayList<UltimateAttack> a) {
+		if (x != null && x.length() > 0)
+			for (UltimateAttack u : a)
+				if (u.getName().equals(x))
+					return u;
 		return null;
 	}
 

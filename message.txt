@@ -1,1 +1,11 @@
-updates in: world view, battle View and upgrade view
+fixed cheat code, duplicate fighters' names
+
+the way the flow of initializing the game goes made me create a fighter when
+using cheat to avoid null pointer exceptions
+
+because you won't be able to switch to the other duplicate fighter using linear
+search
+
+ - more accuracy in battle view during battle
+ - updated create new fighter view
+ - updated upgrade fighter view

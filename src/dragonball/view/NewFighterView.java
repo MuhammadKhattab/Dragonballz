@@ -21,7 +21,6 @@ public class NewFighterView extends JFrame {
 	private String chosenRace;
 
 	private JLabel enter;
-	private JLabel fighterIcon;
 
 	private JButton csaiyan;
 	private JButton cmajin;
@@ -30,27 +29,22 @@ public class NewFighterView extends JFrame {
 	private JButton cnamekian;
 	private JButton create;
 
+	private Race racePanel;
+
 	public NewFighterView() {
 		super("DragonBallZ");
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setLayout(new BorderLayout());
-
+		Color color = new Color(179, 202, 230);
 		chosenRace = "Saiyan";
 
-		
-		JPanel image = new JPanel();
-		image.setBackground(new Color(179, 255, 230));
-		
-		add(image,BorderLayout.CENTER);
-
 		JPanel buttons = new JPanel();
-		buttons.setBackground(new Color(179, 255, 230));
+		buttons.setBackground(color);
 		buttons.setLayout(new GridLayout(1, 0));
 
-		JPanel textbar = new JPanel();
-		textbar.setBackground(new Color(179, 255, 230));
+		JPanel turnPanel = new JPanel();
+		turnPanel.setBackground(color);
 
-		
 		enter = new JLabel("Enter fighter's name");
 
 		name = new JTextArea();
@@ -61,27 +55,20 @@ public class NewFighterView extends JFrame {
 		create.setBackground(new Color(61, 92, 92));
 		create.setForeground(new Color(240, 245, 245));
 
-//		JPanel left = new JPanel(new BorderLayout());
-		JPanel left = new JPanel(new GridLayout(0, 1));
-		left.setBackground(new Color(179, 255, 230));
-		
+		JPanel right = new JPanel(new GridLayout(0, 1));
+		right.setBackground(color);
+
 		JPanel creating = new JPanel();
-		creating.setBackground(new Color(179, 255, 230));
+		creating.setBackground(color);
+
 		creating.add(enter);
 		creating.add(name);
 		creating.add(create);
-		
-		left.add(creating);
-		left.add(textbar);
-		
-//		left.add(creating, BorderLayout.NORTH);
-//		left.add(textbar, BorderLayout.CENTER);
-		
-		add(left, BorderLayout.WEST);
 
-		ImageIcon icon = WorldView.resizeIcon("Saiyan choose.png", 300, 500);
-		fighterIcon = new JLabel(icon);
-		image.add(fighterIcon);
+		right.add(turnPanel);
+		right.add(creating);
+
+		add(right, BorderLayout.EAST);
 
 		csaiyan = new JButton("Saiyan");
 		csaiyan.setName("saiyan choose");
@@ -121,12 +108,17 @@ public class NewFighterView extends JFrame {
 
 		add(buttons, BorderLayout.SOUTH);
 
-		text = new JTextArea(info("Saiyan"));
+		text = new JTextArea(info());
 		text.setEditable(false);
-		text.setBackground(new Color(179, 255, 230));
+		text.setBackground(color);
 		text.setFont(new Font("ariel", Font.BOLD, 20));
 
-		textbar.add(text);
+		turnPanel.add(text);
+
+		ImageIcon icon = WorldView.resizeIcon("Saiyan choose.png", 300, 500);
+
+		racePanel = new Race(chosenRace, hp(), pd(), bd(), ki(), st(), icon);
+		add(racePanel, BorderLayout.CENTER);
 
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowDestroyer());
@@ -139,10 +131,88 @@ public class NewFighterView extends JFrame {
 
 	}
 
+	private int pd() {
+		if (chosenRace.equals("Majin"))
+			return 50;
+		if (chosenRace.equals("Saiyan"))
+			return 100;
+		if (chosenRace.equals("Frieza"))
+			return 75;
+		if (chosenRace.equals("Earthling"))
+			return 50;
+		if (chosenRace.equals("Namekian"))
+			return 50;
+		return 0;
+	}
+
+	private int st() {
+		if (chosenRace.equals("Majin"))
+			return 6;
+		if (chosenRace.equals("Saiyan"))
+			return 3;
+		if (chosenRace.equals("Frieza"))
+			return 4;
+		if (chosenRace.equals("Earthling"))
+			return 4;
+		if (chosenRace.equals("Namekian"))
+			return 5;
+		return 0;
+	}
+
+	private int ki() {
+		if (chosenRace.equals("Majin"))
+			return 3;
+		if (chosenRace.equals("Saiyan"))
+			return 5;
+		if (chosenRace.equals("Frieza"))
+			return 4;
+		if (chosenRace.equals("Earthling"))
+			return 4;
+		if (chosenRace.equals("Namekian"))
+			return 3;
+		return 0;
+	}
+
+	private int bd() {
+		if (chosenRace.equals("Majin"))
+			return 50;
+		if (chosenRace.equals("Saiyan"))
+			return 150;
+		if (chosenRace.equals("Frieza"))
+			return 75;
+		if (chosenRace.equals("Earthling"))
+			return 50;
+		if (chosenRace.equals("Namekian"))
+			return 0;
+		return 0;
+	}
+
+	int hp() {
+		if (chosenRace.equals("Majin"))
+			return 1500;
+		if (chosenRace.equals("Saiyan"))
+			return 1000;
+		if (chosenRace.equals("Frieza"))
+			return 1100;
+		if (chosenRace.equals("Earthling"))
+			return 1250;
+		if (chosenRace.equals("Namekian"))
+			return 1350;
+		return 0;
+	}
+
 	public void update(String s) {
 		chosenRace = s;
-		text.setText(info(s));
-		fighterIcon.setIcon(WorldView.resizeIcon(s + " choose.png", width(), height()));
+
+		text.setText(info());
+
+		racePanel.getPhysicalDamage().setText("Physical Damage: " + pd());
+		racePanel.getBlastDamage().setText("Blast Damage: " + bd());
+		racePanel.getMaxHealthPoints().setText("HP: " + hp());
+		racePanel.getMaxStamina().setText("Stamina: " + st());
+		racePanel.getMaxKi().setText("Ki: " + ki());
+		racePanel.getRaceIcon().setIcon(WorldView.resizeIcon(String.format("%s.png", s), 50, 50));
+		racePanel.getFighterIcon().setIcon(WorldView.resizeIcon(String.format("%s choose.png", s), width(), height()));
 	}
 
 	public String getChosenRace() {
@@ -155,14 +225,6 @@ public class NewFighterView extends JFrame {
 
 	public String getFighterName() {
 		return name.getText();
-	}
-
-	public JTextArea getText() {
-		return text;
-	}
-
-	public JLabel getFighterIcon() {
-		return fighterIcon;
 	}
 
 	public JButton getCsaiyan() {
@@ -185,17 +247,17 @@ public class NewFighterView extends JFrame {
 		return cnamekian;
 	}
 
-	public String info(String race) {
-		if (race.equals("Saiyan"))
-			return "Saiyan\nMax HP: 1000\nBlast Damage:150\nPhysical Damage: 100\nMax ki: 5\nMax Stamina: 3";
-		if (race.equals("Majin"))
-			return "Majin\nMax HP: 1500\nBlast Damage:50\nPhysical Damage: 50\nMax ki: 3\nMax Stamina: 6";
-		if (race.equals("Namekian"))
-			return "Namekian\nMax HP: 1350\nBlast Damage:0\nPhysical Damage: 50\nMax ki: 3\nMax Stamina: 6";
-		if (race.equals("Earthling"))
-			return "Earthling\nMax HP: 1250\nBlast Damage:50\nPhysical Damage: 50\nMax ki: 4\nMax Stamina: 4";
-		if (race.equals("Frieza"))
-			return "Frieza\nMax HP: 1100\nBlast Damage:75\nPhysical Damage: 75\nMax ki: 4\nMax Stamina: 4";
+	public String info() {
+		if (chosenRace.equals("Majin"))
+			return "+1 stamina/foe turn";
+		if (chosenRace.equals("Saiyan"))
+			return "+1 stamina/turn";
+		if (chosenRace.equals("Frieza"))
+			return "+1 stamina/turn";
+		if (chosenRace.equals("Earthling"))
+			return "+1 stamina/turn\n+1 ki/my turn";
+		if (chosenRace.equals("Namekian"))
+			return "+1 stamina/turn\n+50 health/turn";
 		return "";
 	}
 

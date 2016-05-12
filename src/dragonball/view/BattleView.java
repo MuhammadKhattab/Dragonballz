@@ -176,28 +176,28 @@ public class BattleView extends JFrame {
 		icon = WorldView.resizeIcon("physical attack.png", 50, 50);
 
 		physical = new JButton("Physical Attack");
-		physical.setName("phyAttack");
+		physical.setName("attack physical");
 		physical.setIcon(icon);
 		physical.setBackground(new Color(204, 102, 102));
 
 		icon = WorldView.resizeIcon("super attack.png", 50, 50);
 
 		zuper = new JButton("Super Attack");
-		zuper.setName("supAttack");
+		zuper.setName("attack super");
 		zuper.setIcon(icon);
 		zuper.setBackground(new Color(204, 102, 102));
 
 		icon = WorldView.resizeIcon("ultimate attack.png", 50, 50);
 
 		ultimate = new JButton("Ultimate Attack");
-		ultimate.setName("ultAttack");
+		ultimate.setName("attack ultimate");
 		ultimate.setIcon(icon);
 		ultimate.setBackground(new Color(204, 102, 102));
 
 		comments = new JTextArea("Fight!");
 		comments.setEditable(false);
 		comments.setBackground(new Color(159, 190, 223));
-		
+
 		scrollPane = new JScrollPane(comments);
 		scrollPane.setPreferredSize(new Dimension(200, 200));
 
@@ -210,7 +210,7 @@ public class BattleView extends JFrame {
 		buttons.setBackground(new Color(159, 190, 223));
 
 		upper = new JPanel(new GridLayout(0, 2));
-//		upper.setPreferredSize(new Dimension(WIDTH, 600));
+		// upper.setPreferredSize(new Dimension(WIDTH, 600));
 		upper.add(fighterData);
 		upper.add(foeData);
 
@@ -291,7 +291,6 @@ public class BattleView extends JFrame {
 	// }
 
 	public void update() {
-		foeIdle();
 		new java.util.Timer().schedule(new java.util.TimerTask() {
 			@Override
 			public void run() {
@@ -338,6 +337,8 @@ public class BattleView extends JFrame {
 				+ ((Fighter) battle.getFoe()).getMaxStamina());
 		foeHealth.setText("Foe health: " + ((Fighter) battle.getFoe()).getHealthPoints() + "/"
 				+ ((Fighter) battle.getFoe()).getMaxHealthPoints());
+
+		foeIdle();
 
 		repaint();
 		validate();
@@ -392,23 +393,62 @@ public class BattleView extends JFrame {
 	}
 
 	public void foePhysicalAttack() {
-		new java.util.Timer().schedule(new java.util.TimerTask() {
-			@Override
-			public void run() {
-				ImageIcon icon = new ImageIcon(String.format("resources/images/%s attacks.gif", foe()));
-				foeIcon.setIcon(icon);
-			}
-		}, 1000);
-
+		// new java.util.Timer().schedule(new java.util.TimerTask() {
+		// @Override
+		// public void run() {
+		ImageIcon icon = new ImageIcon(String.format("resources/images/%s attacks.gif", foe()));
+		foeIcon.setIcon(icon);
+		// }
+		// }, 1000);
 	}
 
 	public void foeIdle() {
-		ImageIcon icon = new ImageIcon(String.format("resources/images/%s idle.gif", foe()));
-		foeIcon.setIcon(icon);
+		new java.util.Timer().schedule(new java.util.TimerTask() {
+			@Override
+			public void run() {
+				ImageIcon icon = new ImageIcon(String.format("resources/images/%s idle.gif", foe()));
+				foeIcon.setIcon(icon);
+			}
+		}, 1000);
 	}
 
 	public String foe() {
 		return "foe1";
 	}
 
+	public void block() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void foeBlock() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void use() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void foeSuperAttack() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void superAttack() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void foeUltimateAttack() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void ultimateAttack() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }

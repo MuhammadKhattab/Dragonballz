@@ -115,8 +115,6 @@ public class Battle implements Serializable {
 				x.setStamina(x.getMaxStamina());
 				player.setSenzuBeans(senzu - 1);
 
-				setTurn("You used a senzu bean!");
-
 				notifyOnBattleEvent(new BattleEvent(this, BattleEventType.USE, collectible));
 
 				endTurn();

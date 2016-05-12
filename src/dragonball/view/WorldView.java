@@ -106,7 +106,6 @@ public class WorldView extends JFrame {
 		newFighter.setName("new");
 		newFighter.setBackground(new Color(255, 121, 77));
 		newFighter.setForeground(new Color(255, 255, 204));
-		newFighter.setToolTipText("New Friends!");
 		newFighter.setIcon(icon);
 
 		icon = resizeIcon("senzu beans.png", 50, 50);
@@ -280,32 +279,30 @@ public class WorldView extends JFrame {
 		return icon;
 	}
 
-	public int width() {
-		PlayableFighter fi = player.getActiveFighter();
-		if (fi instanceof Majin)
+	public static int width(PlayableFighter fighter) {
+		if (fighter instanceof Majin)
 			return 200;
-		if (fi instanceof Frieza)
+		if (fighter instanceof Frieza)
 			return 128;
-		if (fi instanceof Saiyan)
+		if (fighter instanceof Saiyan)
 			return 180;
-		if (fi instanceof Earthling)
+		if (fighter instanceof Earthling)
 			return 100;
-		if (fi instanceof Namekian)
+		if (fighter instanceof Namekian)
 			return 200;
 		return 0;
 	}
 
-	public int height() {
-		PlayableFighter fi = player.getActiveFighter();
-		if (fi instanceof Majin)
+	public static int height(PlayableFighter fighter) {
+		if (fighter instanceof Majin)
 			return 200;
-		if (fi instanceof Frieza)
+		if (fighter instanceof Frieza)
 			return 200;
-		if (fi instanceof Saiyan)
+		if (fighter instanceof Saiyan)
 			return 200;
-		if (fi instanceof Earthling)
+		if (fighter instanceof Earthling)
 			return 200;
-		if (fi instanceof Namekian)
+		if (fighter instanceof Namekian)
 			return 200;
 		return 0;
 	}
@@ -321,8 +318,7 @@ public class WorldView extends JFrame {
 		return "Coolers Armored Squadron";
 	}
 
-	public String race() {
-		PlayableFighter fi = player.getActiveFighter();
+	public static String race(PlayableFighter fi) {
 		if (fi instanceof Majin)
 			return "Majin";
 		if (fi instanceof Frieza)
@@ -388,32 +384,34 @@ public class WorldView extends JFrame {
 		ImageIcon icon = resizeIcon(movRace(), 60, 60);
 		button.setIcon(icon);
 
+		updateRace();
+
 		repaint();
 		validate();
 	}
 
 	public void updateRace() {
-		race.setText("Race: " + race());
-		ImageIcon icon = resizeIcon(String.format("%s.png", race()), 60, 60);
+		race.setText("Race: " + race(player.getActiveFighter()));
+		ImageIcon icon = resizeIcon(String.format("%s.png", race(player.getActiveFighter())), 60, 60);
 
 		race.setIcon(icon);
 
-		icon = resizeIcon(String.format("%s.png", charRace()), width(), height());
+		icon = resizeIcon(String.format("%s.png", charRace(player.getActiveFighter())),
+				width(player.getActiveFighter()), height(player.getActiveFighter()));
 
 		fighterIcon.setIcon(icon);
 	}
 
-	public String charRace() {
-		PlayableFighter fi = player.getActiveFighter();
-		if (fi instanceof Majin)
+	public static String charRace(PlayableFighter fighter) {
+		if (fighter instanceof Majin)
 			return "Majin mock";
-		if (fi instanceof Frieza)
+		if (fighter instanceof Frieza)
 			return "Frieza what";
-		if (fi instanceof Saiyan)
+		if (fighter instanceof Saiyan)
 			return "Goku Sleeping";
-		if (fi instanceof Earthling)
+		if (fighter instanceof Earthling)
 			return "Krillin staring";
-		if (fi instanceof Namekian)
+		if (fighter instanceof Namekian)
 			return "Namekian yuga";
 		return "";
 

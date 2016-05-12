@@ -158,7 +158,10 @@ public class Player implements Serializable {
 		notifyOnWishChosen(wish);
 	}
 
-	public void createFighter(char race, String name) {
+	public void createFighter(char race, String name) throws Exception {
+		for(PlayableFighter x: fighters)
+			if(x.getName().equals(name))
+				throw new Exception("This name already exists!");
 		PlayableFighter neu = null;
 		switch (race) {
 		case 'E':

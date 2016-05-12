@@ -15,9 +15,10 @@ public class SuperSaiyan extends UltimateAttack {
 		return 0;
 	}
 
+	@Override
 	public void onUse(BattleOpponent attacker, BattleOpponent defender, boolean defenderBlocking)
 			throws NotEnoughKiException {
-		if (((Saiyan) attacker).getKi() >= 3)
+		if (((Saiyan) attacker).getKi() > 2)
 			((Saiyan) attacker).setTransformed(true);
 		else
 			throw new NotEnoughKiException(3, ((Saiyan) attacker).getKi());
